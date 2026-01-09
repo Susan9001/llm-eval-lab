@@ -68,9 +68,8 @@ llm-eval-lab/
    pytest
    ```
 
-Later, as we implement more features, we will extend this README with:
+Later, as more features are implemented, docs will be added with:
 
-- Database schema details
 - Evaluation pipeline description
 - API usage
 - Example reports
