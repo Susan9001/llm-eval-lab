@@ -1,0 +1,30 @@
+# Python 字节码和缓存
+__pycache__/
+*.py[cod]
+*.pyo
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# pytest, coverage, Ruff 等缓存
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+coverage.xml
+htmlcov/
+.coverage*
+
+# 编辑器和系统文件
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# 环境变量文件
+.env
+*.env
+
+# data/raw/*
+# data/tmp/*
