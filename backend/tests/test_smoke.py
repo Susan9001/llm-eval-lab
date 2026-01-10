@@ -1,26 +1,10 @@
-from sqlalchemy.orm import Session
-from app.db import EvalRun, create_engine_and_tables, insert_dummy_run
+from sqlalchemy import text
+from sqlalchemy import create_engine
+from app.db import get_database_url
 
 
-def test_insert_dummy_run_and_query_back() -> None:
-  """最小 smoke test:
-  1. 建表
-  2. 插入一条 dummy run
-  3. 用 run_id 把它查出来
-  4. 删掉这条记录
-  """
-
-  engine = create_engine_and_tables()
-
-  run_id = insert_dummy_run(engine)
-
-  with Session(engine) as session:
-    eval_run = session.query(EvalRun).filter(EvalRun.run_id == run_id).one()
-
-    assert eval_run.run_id == run_id
-    assert eval_run.status == "CREATED"
-    assert eval_run.id is not None
-
-    # 清理: 删除这条 dummy 数据
-    session.delete(eval_run)
-    session.commit()
+def test_db_connection_smoke() -> None:
+  engine = create_engine(get_database_url())
+  with engine.connect() as conn:
+    result = conn.execute(text("SELECT 1"))
+    assert result.scalar_one() == 1

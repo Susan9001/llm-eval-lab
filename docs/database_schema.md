@@ -88,29 +88,6 @@ Prompts are referenced from:
 - `model_outputs.generation_prompt_id` when the system itself generates outputs.
 - `eval_runs.judge_prompt_id` when a judge model uses a prompt to score outputs.
 
-### eval_runs
-
-An evaluation run is a job configuration applied to exactly one dataset row name plus version plus split.
-
-Key fields:
-
-- `run_id`: internal primary key.
-- `run_uid`: external identifier for command line, logs, and URLs, recommended to be a UUID.
-- `dataset_id`: foreign key to `datasets.dataset_id`, the dataset being evaluated.
-- `judge_prompt_id`: foreign key to `prompts.prompt_id`, pointing to a `purpose = 'JUDGE'` prompt if a judge prompt is used.
-- `evaluator_name`: name of the evaluator, for example `llm_judge`, `rule_based`, or `toxicity_classifier`.
-- `evaluator_params` JSONB: evaluator configuration, for example judge model name, thresholds, output parsing flags, few shot retrieval settings.
-- `run_status`: `PENDING`, `RUNNING`, `SUCCEEDED`, or `FAILED` at the run level.
-- `git_commit`: optional code version hash for traceability.
-- `config_name`: optional human readable configuration name.
-- `parent_run_id`: optional foreign key to another `eval_runs.run_id`, used to group multiple child runs into a suite.
-- `created_at`, `started_at`, `finished_at`: timestamps.
-
-Design notes:
-
-- One `eval_run` evaluates exactly one dataset row. This keeps aggregation and comparisons straightforward.
-- For a multi dataset benchmark, use a parent run with `parent_run_id` on each child run. The parent may leave `dataset_id` null and act purely as a logical container.
-
 ### model_outputs
 
 Generated or imported outputs for a sample.
@@ -138,6 +115,29 @@ Typical indexes:
 
 - `model_outputs(sample_id)`.
 - `model_outputs(generation_status)`.
+
+### eval_runs
+
+An evaluation run is a job configuration applied to exactly one dataset row name plus version plus split.
+
+Key fields:
+
+- `run_id`: internal primary key.
+- `run_uid`: external identifier for command line, logs, and URLs, recommended to be a UUID.
+- `dataset_id`: foreign key to `datasets.dataset_id`, the dataset being evaluated.
+- `judge_prompt_id`: foreign key to `prompts.prompt_id`, pointing to a `purpose = 'JUDGE'` prompt if a judge prompt is used.
+- `evaluator_name`: name of the evaluator, for example `llm_judge`, `rule_based`, or `toxicity_classifier`.
+- `evaluator_params` JSONB: evaluator configuration, for example judge model name, thresholds, output parsing flags, few shot retrieval settings.
+- `run_status`: `PENDING`, `RUNNING`, `SUCCEEDED`, or `FAILED` at the run level.
+- `git_commit`: optional code version hash for traceability.
+- `config_name`: optional human readable configuration name.
+- `parent_run_id`: optional foreign key to another `eval_runs.run_id`, used to group multiple child runs into a suite.
+- `created_at`, `started_at`, `finished_at`: timestamps.
+
+Design notes:
+
+- One `eval_run` evaluates exactly one dataset row. This keeps aggregation and comparisons straightforward.
+- For a multi dataset benchmark, use a parent run with `parent_run_id` on each child run. The parent may leave `dataset_id` null and act purely as a logical container.
 
 ### eval_results
 
