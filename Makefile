@@ -1,4 +1,4 @@
-.PHONY: up down logs ps test lint fmt
+.PHONY: up down logs ps test lint fmt fix
 
 up:
 	docker compose up -d
@@ -15,9 +15,12 @@ logs:
 test:
 	cd backend && .venv/bin/pytest
 
-# 代码静态检查
 lint:
 	cd backend && .venv/bin/ruff check app tests
 
 fmt:
+	cd backend && .venv/bin/ruff format app tests
+
+fix:
+	cd backend && .venv/bin/ruff check --fix app tests
 	cd backend && .venv/bin/ruff format app tests
