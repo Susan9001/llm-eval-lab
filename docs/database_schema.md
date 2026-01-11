@@ -48,7 +48,7 @@ Key fields:
 
 - `sample_id`: primary key.
 - `dataset_id`: foreign key to `datasets.dataset_id`.
-- `external_id`: original row identifier from source dataset or logs, if available.
+- `source_sample_id`: original row identifier from source dataset or logs, if available.
 - `input_text`: the input content that will be bound into prompts, often the user query or question.
 - `reference_output`: optional reference answer or label, used by some metrics.
 - `metadata` JSONB: optional tags, such as category, topic, difficulty, jailbreak type.
@@ -56,7 +56,7 @@ Key fields:
 
 Uniqueness:
 
-- `UNIQUE(dataset_id, external_id)` prevents duplicate imports from the same source.
+- `UNIQUE(dataset_id, source_sample_id)` prevents duplicate imports from the same source.
 
 Typical index:
 
@@ -126,8 +126,8 @@ Key fields:
 - `run_uid`: external identifier for command line, logs, and URLs, recommended to be a UUID.
 - `dataset_id`: foreign key to `datasets.dataset_id`, the dataset being evaluated.
 - `judge_prompt_id`: foreign key to `prompts.prompt_id`, pointing to a `purpose = 'JUDGE'` prompt if a judge prompt is used.
-- `evaluator_name`: name of the evaluator, for example `llm_judge`, `rule_based`, or `toxicity_classifier`.
-- `evaluator_params` JSONB: evaluator configuration, for example judge model name, thresholds, output parsing flags, few shot retrieval settings.
+- `eval_name`: name of the evaluator, for example `llm_judge`, `rule_based`, or `toxicity_classifier`.
+- `eval_params` JSONB: evaluator configuration, for example judge model name, thresholds, output parsing flags, few shot retrieval settings.
 - `run_status`: `PENDING`, `RUNNING`, `SUCCEEDED`, or `FAILED` at the run level.
 - `git_commit`: optional code version hash for traceability.
 - `config_name`: optional human readable configuration name.
@@ -148,8 +148,8 @@ Key fields:
 - `result_id`: primary key.
 - `run_id`: foreign key to `eval_runs.run_id`.
 - `output_id`: foreign key to `model_outputs.output_id`.
-- `evaluation_status`: `PENDING`, `RUNNING`, `SUCCEEDED`, `FAILED`, or `SKIPPED` for the evaluation step.
-- `score` JSONB: map of metric name to values, for example
+- `eval_status`: `PENDING`, `RUNNING`, `SUCCEEDED`, `FAILED`, or `SKIPPED` for the evaluation step.
+- `scores` JSONB: map of metric name to values, for example
 
   ```json
   {
@@ -160,7 +160,7 @@ Key fields:
   ```
 
 - `rationale`: optional explanation or summary reasoning from the judge or rule engine.
-- `evaluation_error_message`: error message for evaluation failures only.
+- `eval_error_message`: error message for evaluation failures only.
 - `created_at`, `started_at`, `finished_at`: timestamps.
 
 Uniqueness:
@@ -171,7 +171,7 @@ Typical indexes:
 
 - `eval_results(run_id)` for aggregations per run.
 - `eval_results(output_id)` for looking up all evaluations of a given output.
-- `eval_results(evaluation_status)` for scheduling and monitoring.
+- `eval_results(eval_status)` for scheduling and monitoring.
 
 ## Typical workflows
 
@@ -186,19 +186,19 @@ Typical indexes:
    - Fills `output_text` or `output_artifact_uri`.
    - Sets `generation_status` and timestamps, and fills `generation_error_message` on failure.
 5. Create an `eval_run` for this dataset and evaluator configuration.
-6. For each `model_outputs` row, create an `eval_results` row with `evaluation_status = 'PENDING'`.
+6. For each `model_outputs` row, create an `eval_results` row with `eval_status = 'PENDING'`.
 7. An evaluator worker:
    - Reads pending evaluation rows.
    - Applies the evaluator or judge prompt.
    - Fills `score` and `rationale`.
-   - Updates `evaluation_status` and timestamps, and fills `evaluation_error_message` on failure.
+   - Updates `eval_status` and timestamps, and fills `eval_error_message` on failure.
 
 ### Evaluate only, import existing outputs
 
 1. Insert a `datasets` row and `samples`, for example canonicalized from logs.
 2. Insert `model_outputs` rows with `generation_status = 'SUCCEEDED` and `output_text` or `output_artifact_uri` filled.
 3. Create an `eval_run` for this dataset and evaluator configuration.
-4. Insert `eval_results` rows, one per `output_id`, with `evaluation_status = 'PENDING'`.
+4. Insert `eval_results` rows, one per `output_id`, with `eval_status = 'PENDING'`.
 5. Run the evaluator worker as above.
 
 This workflow is used for offline evaluation of production logs or pre generated outputs.
@@ -206,7 +206,7 @@ This workflow is used for offline evaluation of production logs or pre generated
 ### Multiple evaluations on the same output
 
 - Reuse the same `model_outputs.output_id`.
-- Create multiple `eval_runs` with different `evaluator_name`, `evaluator_params`, or judge prompts.
+- Create multiple `eval_runs` with different `eval_name`, `eval_params`, or judge prompts.
 - Each run produces its own `eval_results` rows for that `output_id`.
 
 This supports:
