@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlalchemy import (
   DateTime,
@@ -17,10 +17,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 
 from app.db import Base
-
-
-def utcnow():
-  return datetime.now(timezone.utc)
 
 
 class Dataset(Base):
