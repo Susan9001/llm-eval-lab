@@ -14,10 +14,12 @@ def test_apply_sampling_random_requires_limit() -> None:
   with pytest.raises(ValueError):
     apply_sampling(items, should_random_sample=True, limit=None, seed=42)
 
+
 def test_apply_sampling_head_all() -> None:
   items = list(range(5))
   res = apply_sampling(items, should_random_sample=False, limit=None, seed=None)
   assert res == [0, 1, 2, 3, 4]
+
 
 def test_apply_sampling_head_keeps_order() -> None:
   items = list(range(10))

@@ -25,7 +25,8 @@ Versioned evaluation datasets.
 Key fields:
 
 - `dataset_id`: internal primary key.
-- `name`: dataset name, for example `truthfulqa` or `realtotoxicityprompts`.
+- `dataset_group_uid `: dataset name, for example `truthfulqa` or `realtotoxicityprompts`.
+- `display_name`: optional human readable name, safe to rename without breaking grouping.
 - `version`: dataset version string, for example `v1` or `2026_01_09`.
 - `split`: optional, for example `train`, `test`, `validation`, `prod_logs`.
 - `description`: human readable description.
@@ -38,7 +39,7 @@ Key fields:
 
 Uniqueness:
 
-- `UNIQUE(name, version, split)` keeps each dataset version distinct.
+- `UNIQUE(dataset_group_uid, version, split)` keeps each dataset version distinct.
 
 ### samples
 
@@ -71,7 +72,10 @@ Each row is a concrete version of a prompt. `prompt_group_uid` groups versions t
 Key fields:
 
 - `prompt_id`: primary key.
-- `prompt_group_uid`: stable string identifier that groups versions of the same logical prompt, recommended to be a UUID in the application.
+- `prompt_group_uid`: human-readable stable identifier for a prompt family.
+   - Use lowercase snake_case only, with characters limited to [a-z0-9_].
+   - Must start with a letter, must not contain spaces or special characters, and should be treated as immutable once created.
+   - Examples: truthfulqa_generation_base, truthfulness_judge_binary.
 - `purpose`: `GENERATION` or `JUDGE`.
 - `version`: version string within the group, for example `v1`, `v2`, or a date.
 - `display_name`: optional human readable name, safe to rename without breaking grouping.

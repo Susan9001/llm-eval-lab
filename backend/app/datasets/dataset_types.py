@@ -3,7 +3,7 @@ from typing import Any, TypedDict
 
 
 class SampleRecord(TypedDict, total=False):
-  source_sample_id: str | None
+  source_sample_id: str
   input_text: str
   reference_output: str | None
   metadata: dict[str, Any] | None

@@ -15,7 +15,7 @@ Recommended layout under `backend/app/datasets/`:
 2. `dataset_types.py`  
    Type definitions such as `SampleRecord`, `RawRow`, and `AdapterFn`.
 3. `truthfulqa.py`  
-   A TruthfulQA adapter implementation (example adapter).
+   A TruthfulQA adapter implementation (example adapter) under `backend/app/datasets/adapters`.
 4. `build_dataset_snapshot.py`  
    A CLI entrypoint that produces snapshot artifacts.
 
@@ -25,7 +25,7 @@ Recommended layout under `backend/app/datasets/`:
 
 `SampleRecord` is the adapter output contract:
 
-- `source_sample_id`: Optional identifier from the source dataset.
+- `source_sample_id`: Identifier from the source dataset.
 - `input_text`: The model input text.
 - `reference_output`: Optional reference answer/target.
 - `metadata`: Optional dict for extra fields (category, source, difficulty, etc.).

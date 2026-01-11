@@ -17,10 +17,15 @@ llm-eval-lab/
     app/
       configs/
       datasets/
-      models/
-      services/
+        build_dataset_snapshot.py
         dataset_loader.py
+        adapters/
+          truthfulqa.py
+      models/
+        schema.py
+      eval/
         prompt_runner.py
+      services/
         model_adapters/
         judges/
         aggregator.py
@@ -28,6 +33,9 @@ llm-eval-lab/
         regression.py
       api/
       workers/
+      db.py
+    scripts/
+      run_truthfulqa_snapshot.sh
     tests/
   data/
     snapshots/

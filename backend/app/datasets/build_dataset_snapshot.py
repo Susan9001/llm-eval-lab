@@ -16,7 +16,7 @@ SampleRecord = dict[str, Any]
 
 @dataclass(frozen=True)
 class BuildArgs:
-  input_path: str # e.g. data/TruthfulQA.csv
+  input_path: str  # e.g. data/TruthfulQA.csv
   file_format: str  # "csv" | "jsonl"
   adapter_name: str  # "truthfulqa" | "generic" | ...
   out_jsonl_path: str  # e.g. data/snapshots/mini_truth.jsonl

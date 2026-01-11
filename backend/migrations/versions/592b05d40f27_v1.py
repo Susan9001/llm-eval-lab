@@ -1,8 +1,8 @@
-"""v1 schema
+"""v1
 
-Revision ID: 09777a3def9c
+Revision ID: 592b05d40f27
 Revises: 
-Create Date: 2026-01-10 17:04:19.077421
+Create Date: 2026-01-11 14:12:45.819426
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '09777a3def9c'
+revision: str = '592b05d40f27'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -81,7 +81,7 @@ def upgrade() -> None:
     op.create_table('samples',
     sa.Column('sample_id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('dataset_id', sa.BigInteger(), nullable=False),
-    sa.Column('source_sample_id', sa.String(length=255), nullable=True),
+    sa.Column('source_sample_id', sa.String(length=255), nullable=False),
     sa.Column('input_text', sa.Text(), nullable=False),
     sa.Column('reference_output', sa.Text(), nullable=True),
     sa.Column('metadata', postgresql.JSONB(astext_type=sa.Text()), nullable=True),

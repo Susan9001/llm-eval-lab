@@ -71,7 +71,7 @@ def test_smoke_db_seed_6_tables_and_rollback() -> None:
 
     sample = Sample(
       dataset_id=dataset.dataset_id,
-      source_sample_id=None,
+      source_sample_id=123,
       input_text="What is 2 + 2?",
       reference_output="4",
       metadata_json={"category": "math"},
