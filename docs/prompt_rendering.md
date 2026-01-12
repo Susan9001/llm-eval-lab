@@ -13,7 +13,7 @@ Recommended layout:
 3. `prompts/`  
    Human-authored prompt templates, versioned by filename (e.g. `v1.txt`, `v2.txt`).
 4. `data/snapshots/`  
-   Local samples snapshot JSONL produced by Day 3 (e.g. `mini_truth.jsonl`).
+   Local samples snapshot JSONL (e.g. `mini_truth.jsonl`).
 5. `reports/rendered_prompts/`  
    Rendered prompt artifacts (JSONL), organized by `{prompt_group_uid}/{prompt_version}.jsonl`.
 
@@ -43,7 +43,7 @@ Supported placeholders:
 
 - `{input_text}`: required for generation prompts.
 - `{reference_output}`: optional, only if your sample jsonl contains it.
-- `{output_text}`: optional, intended for judge prompts later. Not used in the Day 4 generation rendering flow.
+- `{output_text}`: optional, intended for judge prompts later.
 
 Rendering strategy:
 
@@ -57,9 +57,7 @@ Code: `backend/app/prompts/prompt_template.py`.
 
 Location: `data/snapshots/`
 
-Example:
-
-- `data/snapshots/mini_truth.jsonl`
+Example: `data/snapshots/mini_truth.jsonl`
 
 Each line is a JSON object. Minimum required fields:
 
@@ -70,8 +68,6 @@ Optional fields:
 
 - `reference_output`: string or null
 - `metadata`: JSON object or null
-
-The Day 4 flow treats this jsonl as the source of truth for sample content.
 
 ## Outputs
 

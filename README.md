@@ -23,7 +23,6 @@ llm-eval-lab/
       datasets/
         adapters/                            # dataset-specific parsing and normalization
           truthfulqa.py
-        build_dataset_snapshot.py            # snapshot builder logic used by CLI
         dataset_loader.py                    # iterators for csv/jsonl loading
         dataset_types.py                     # TypedDict records for dataset rows
       prompts/
@@ -42,7 +41,7 @@ llm-eval-lab/
       run_truthfulqa_snapshot.sh             # one-click: build TruthfulQA snapshot
       run_truthfulqa_rendered_prompts.sh     # one-click: render prompts v1/v2 for mini snapshot
     tests/
-      test_build_dataset_snapshot.py
+      test_build_dataset_snapshot_cli.py
       test_dataset_loader.py
       test_prompt_rendering.py
       test_render_prompts_cli.py
@@ -64,9 +63,6 @@ llm-eval-lab/
         v1.jsonl
         v2.jsonl
   docs/
-    dataset_loader.md
-    database_schema.md                       # DB schema notes, mostly for later phases
-    prompt_rendering.md                      # Day 4 doc: how prompt rendering works
   docker-compose.yml
   Makefile
   README.md
@@ -87,7 +83,6 @@ Dataset ingestion and snapshot building.
 
 - `dataset_loader.py`: streaming readers for csv/jsonl.
 - `adapters/`: dataset-specific logic. Example: `truthfulqa.py`.
-- `build_dataset_snapshot.py`: creates a snapshot jsonl plus metadata.
 
 **backend/app/prompts**
 
@@ -103,7 +98,7 @@ Shared file utilities.
 
 **backend/scripts**
 
-One-click scripts to run common workflows without remembering long commands.
+Example scripts to run common workflows without remembering long commands.
 
 **data/**
 

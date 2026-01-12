@@ -16,7 +16,7 @@ Recommended layout under `backend/app/datasets/`:
    Type definitions such as `SampleRecord`, `RawRow`, and `AdapterFn`.
 3. `truthfulqa.py`  
    A TruthfulQA adapter implementation (example adapter) under `backend/app/datasets/adapters`.
-4. `build_dataset_snapshot.py`  
+4. `backend/app/cli/build_dataset_snapshot_cli.py`  
    A CLI entrypoint that produces snapshot artifacts.
 
 ## Core Data Structures
@@ -54,9 +54,46 @@ Rules are intentionally strict to avoid ambiguity:
 
 Note: `row_index` is always the original file row index and never changes after shuffle. This keeps `source_sample_id` construction stable and debuggable.
 
+## Inputs
+
+### Raw dataset files
+
+Location: `data/`
+
+Example:
+
+- `data/TruthfulQA.csv`
+
+Format: CSV or JSONL
+
+### Adapter configuration
+
+Specified via `--adapter` argument, e.g., `truthfulqa`
+
+### Sampling parameters
+
+- `--limit`: Optional limit on number of rows.
+- `--should-random-sample`: If set, shuffle and sample.
+- `--seed`: Random seed for sampling.
+
+## Outputs
+
+Location: `data/snapshots/`
+
+### Snapshot JSONL
+
+- Path: `--out-jsonl`, e.g., `data/snapshots/mini_truth.jsonl`
+- Each line: One JSON object corresponding to a `SampleRecord`.
+
+### Snapshot meta JSON
+
+- Path: `--snapshot-meta`, e.g., `data/snapshots/dataset_snapshot.json`
+- Contains metadata for traceability and reproducibility.
+
 ## How to run
 
 ### Option A: One-click script
+
 ```bash
 bash backend/scripts/run_truthfulqa_rendered_prompts.sh
 ```
@@ -65,7 +102,7 @@ It uses [TruthfulQA.csv](https://github.com/sylinrl/TruthfulQA/blob/main/Truthfu
 ### Option B: Run the CLI directly
 
 ```bash
-PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot.py \
+PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot_cli.py \
   --input-path data/TruthfulQA.csv \
   --format csv \
   --adapter truthfulqa \
@@ -80,7 +117,7 @@ PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot.py \
 For random sampling:
 
 ```bash
-PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot.py \
+PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot_cli.py \
   --input-path data/TruthfulQA.csv \
   --format csv \
   --adapter truthfulqa \
@@ -112,4 +149,4 @@ Recommended steps:
 1. Create a new file under `backend/app/datasets/`, e.g. `<dataset_name>.py`.
 2. Implement `adapt_<dataset_name>_row(row, row_index) -> SampleRecord`.
 3. Add a branch in `dataset_loader.get_adapter()` mapping `adapter_name` to the adapter function.
-4. Run `build_dataset_snapshot.py` once, inspect previews, then validate the JSONL output.
+4. Run `build_dataset_snapshot_cli.py` once, inspect previews, then validate the JSONL output.

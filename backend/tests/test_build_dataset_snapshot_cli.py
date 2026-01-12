@@ -5,17 +5,16 @@ from datetime import datetime
 
 import pytest
 
-from app.datasets.build_dataset_snapshot import (
+from app.cli.build_dataset_snapshot_cli import (
   BuildArgs,
   build_snapshot_meta,
   generate_version,
   write_jsonl,
-  write_snapshot_meta,
 )
 
 
 def test_generate_version_fixed_date(monkeypatch: pytest.MonkeyPatch) -> None:
-  import app.datasets.build_dataset_snapshot as bds
+  import app.cli.build_dataset_snapshot_cli as bds
 
   class FixedDatetime(datetime):
     @classmethod
@@ -77,21 +76,6 @@ def test_build_snapshot_meta_with_autogenerates() -> None:
   assert isinstance(created_at, str)
   assert created_at.endswith("Z")
   assert re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$", created_at)
-
-
-def test_write_snapshot_meta_roundtrip(tmp_path: Path) -> None:
-  meta_path = tmp_path / "dataset_snapshot.json"
-  snap_meta = {
-    "dataset_group_uid": "truthfulqa",
-    "adapter_name": "truthfulqa",
-    "dataset_display_name": "TruthfulQA",
-    "dataset_version": "v1",
-    "created_at": "2026-01-11T00:00:00Z",
-  }
-
-  write_snapshot_meta(str(meta_path), snap_meta)
-  loaded = json.loads(meta_path.read_text(encoding="utf-8"))
-  assert loaded == snap_meta
 
 
 def test_write_jsonl_roundtrip(tmp_path: Path) -> None:
