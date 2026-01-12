@@ -32,6 +32,33 @@ Recommended layout under `backend/app/datasets/`:
 
 See `dataset_types.py` for the exact type.
 
+### DatasetSnapshotMeta
+
+`DatasetSnapshotMeta` is the full snapshot metadata written alongside the snapshot JSONL.
+
+It is the source of truth for snapshot provenance and reproducibility. Typical fields:
+
+- `dataset_group_uid`: stable dataset family identifier (e.g. `"truthfulqa"`)
+- `adapter_name`: adapter used to parse raw rows (e.g. `"truthfulqa"`)
+- `dataset_display_name`: optional, human-friendly name
+- `dataset_version`: version string (provided or auto-generated)
+- `input_path`: raw dataset input path
+- `file_format`: `"csv"` or `"jsonl"`
+- `num_samples`: number of sample records written into snapshot JSONL
+- `split`: e.g. `"test"`
+- `sampling`: sampling config (`should_random_sample`, `limit`, `seed`)
+- `created_at`: ISO-8601 UTC timestamp
+
+### DatasetSnapshotIdentifier
+
+A minimal dataset identity object that downstream artifacts should carry:
+
+- `dataset_group_uid`
+- `dataset_version`
+- `split`
+
+This allows rendered prompts / model outputs to be self-describing without depending on DB IDs.
+
 ### AdapterFn
 
 An adapter is a function:
@@ -98,6 +125,10 @@ Location: `data/snapshots/`
 bash backend/scripts/run_truthfulqa_rendered_prompts.sh
 ```
 It uses [TruthfulQA.csv](https://github.com/sylinrl/TruthfulQA/blob/main/TruthfulQA.csv) as input.
+
+Outputs:
+- data/snapshots/mini_truth.jsonl
+- data/snapshots/dataset_snapshot.json
 
 ### Option B: Run the CLI directly
 

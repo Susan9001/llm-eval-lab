@@ -77,7 +77,6 @@ def parse_args() -> BuildArgs:
   )
   parser.add_argument(
     "--snapshot-meta-path",
-    default=None,
     required=True,
     help="Output snapshot meta json path.",
   )

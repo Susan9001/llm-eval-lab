@@ -60,7 +60,7 @@ def parse_args() -> RenderPromptsCliArgs:
     "--snapshot-meta-path",
     type=str,
     required=True,
-    help="Output snapshot meta json path.",
+    help="Input snapshot meta json path.",
   )
   parser.add_argument(
     "--rendered-prompts-dir",
