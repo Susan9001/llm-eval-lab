@@ -1,4 +1,4 @@
-# Dataset Loader Documentation
+# Dataset Loader
 
 This codepath turns raw dataset files (CSV or JSONL) into a standardized list of `SampleRecord`s via a dataset-specific adapter, and supports:
 
@@ -54,9 +54,15 @@ Rules are intentionally strict to avoid ambiguity:
 
 Note: `row_index` is always the original file row index and never changes after shuffle. This keeps `source_sample_id` construction stable and debuggable.
 
-## CLI Usage
+## How to run
 
-From the repo root, set `PYTHONPATH=backend` so `from app...` imports work:
+### Option A: One-click script
+```bash
+bash backend/scripts/run_truthfulqa_rendered_prompts.sh
+```
+It uses [TruthfulQA.csv](https://github.com/sylinrl/TruthfulQA/blob/main/TruthfulQA.csv) as input.
+
+### Option B: Run the CLI directly
 
 ```bash
 PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot.py \
@@ -88,7 +94,6 @@ PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot.py \
   --seed 42
 ```
 
-An example `.sh` script of [TruthfulQA.csv](https://github.com/sylinrl/TruthfulQA/blob/main/TruthfulQA.csv) lies in `backend/scripts/run_truthfulqa_snapshot.sh`.
 
 ## Artifacts
 

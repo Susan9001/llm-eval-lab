@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
-import os
 import jsonlines
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from app.utils.file_io import ensure_parent_dir, write_json
 from app.datasets.dataset_loader import (
   load_sample_records,
   preview_sample_records,
@@ -189,7 +189,7 @@ def build_snapshot(args: BuildArgs) -> None:
   if args.snapshot_meta_path:
     ensure_parent_dir(args.snapshot_meta_path)
     snap_meta = build_snapshot_meta(args, sample_records)
-    write_snapshot_meta(args.snapshot_meta_path, snap_meta)
+    write_json(args.snapshot_meta_path, snap_meta)
     print("****** metadata previews:")
     print(preview_snapshot_metadata(snap_meta))
     print()
@@ -293,14 +293,6 @@ def preview_snapshot_metadata(snap_meta: dict[str, Any]) -> str:
   for key, value in rows:
     lines.append(f"{key.ljust(key_width)} : {value}")
   return "\n".join(lines)
-
-
-def ensure_parent_dir(path: str) -> None:
-  parent_dir = os.path.dirname(path)
-  if not parent_dir:
-    return
-  if not os.path.exists(parent_dir):
-    os.makedirs(parent_dir)
 
 
 if __name__ == "__main__":
