@@ -3,13 +3,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 import os
+import jsonlines
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
 from app.datasets.dataset_loader import (
   load_sample_records,
   preview_sample_records,
 )
-import jsonlines
-import json
-from datetime import datetime, timezone
 
 SampleRecord = dict[str, Any]
 
@@ -201,9 +203,14 @@ def build_snapshot(args: BuildArgs) -> None:
 
 
 def write_jsonl(out_path: str, sample_records: list[SampleRecord]) -> None:
-  with jsonlines.open(out_path, mode="w") as writer:
-    for item in sample_records:
-      writer.write(item)
+  path = Path(out_path)
+  if path.suffix != ".jsonl":
+    raise ValueError(
+      f"Invalid output file. Expected a .jsonl file. Got: {out_path}"
+    )
+
+  with jsonlines.open(str(path), mode="w") as writer:
+    writer.write_all(sample_records)
 
 
 def generate_version(
@@ -253,7 +260,13 @@ def build_snapshot_meta(
 
 
 def write_snapshot_meta(meta_path: str, snap_meta: dict[str, Any]) -> None:
-  with open(meta_path, "w", encoding="utf-8") as file:
+  path = Path(meta_path)
+  if path.suffix != ".json":
+    raise ValueError(
+      f"Invalid snapshot meta path. Expected a .json file. Got: {meta_path}"
+    )
+
+  with open(path, "w", encoding="utf-8") as file:
     json.dump(snap_meta, file, indent=2, ensure_ascii=False, sort_keys=True)
 
 
