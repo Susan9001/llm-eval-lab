@@ -79,6 +79,7 @@ Key fields:
 - `purpose`: `GENERATION` or `JUDGE`.
 - `version`: version string within the group, for example `v1`, `v2`, or a date.
 - `display_name`: optional human readable name, safe to rename without breaking grouping.
+- `description`: optional long-form description for the prompt.
 - `template_text`: full prompt template text, which may contain placeholders such as `{input_text}` or `{output_text}`.
 - `metadata` JSONB: optional extra information, for example variable descriptions or output format notes.
 - `created_at`: timestamp.

@@ -99,6 +99,7 @@ class Prompt(Base):
   purpose: Mapped[str] = mapped_column(String(32), nullable=False)
   version: Mapped[str] = mapped_column(String(64), nullable=False)
   display_name: Mapped[str | None] = mapped_column(String(128), nullable=True)
+  description: Mapped[str | None] = mapped_column(Text, nullable=True)
   template_text: Mapped[str] = mapped_column(Text, nullable=False)
   metadata_json: Mapped[dict | None] = mapped_column(
     "metadata", JSONB, nullable=True

@@ -84,6 +84,7 @@ def test_smoke_db_seed_6_tables_and_rollback() -> None:
       purpose="GENERATION",
       version=prompt_version,
       display_name="Smoke Generation Prompt",
+      description="Prompt description",
       template_text="Question: {input}\nAnswer:",
       metadata_json={"format": "plain"},
     )
