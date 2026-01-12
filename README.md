@@ -27,7 +27,7 @@ llm-eval-lab/
         dataset_types.py                     # TypedDict records for dataset rows
       prompts/
         prompt_template.py                   # parse prompt path, load template, render placeholders
-      services/                              # DB oriented services, mostly for later phases
+      services/                              # External stores (DB or Redis) oriented services, mostly for later phases and not implemented yet.
         datasets_service.py
         samples_service.py
         prompts_service.py
@@ -79,14 +79,14 @@ Project entry points. These files parse arguments and orchestrate the local work
 
 **backend/app/datasets**
 
-Dataset ingestion and snapshot building.
+Dataset ingestion and snapshot building
 
 - `dataset_loader.py`: streaming readers for csv/jsonl.
 - `adapters/`: dataset-specific logic. Example: `truthfulqa.py`.
 
 **backend/app/prompts**
 
-Prompt utilities.
+Prompt template rendering.
 
 - `prompt_template.py`: defines prompt path conventions, reads `.txt`, and renders placeholders by simple replacement.
 

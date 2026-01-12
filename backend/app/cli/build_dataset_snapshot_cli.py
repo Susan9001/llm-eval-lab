@@ -3,14 +3,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 import jsonlines
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
 from app.utils.file_io import ensure_parent_dir, write_json
+from app.utils.time_utils import utc_now_iso8601
 from app.datasets.dataset_loader import (
   load_sample_records,
   preview_sample_records,
 )
+from app.datasets.dataset_types import DatasetSnapshotMeta
 
 SampleRecord = dict[str, Any]
 
@@ -21,7 +23,7 @@ class BuildArgs:
   file_format: str  # "csv" | "jsonl"
   adapter_name: str  # "truthfulqa" | "generic" | ...
   out_jsonl_path: str  # e.g. data/snapshots/mini_truth.jsonl
-  snapshot_meta_path: str | None  # e.g. data/snapshots/dataset_snapshot.json
+  snapshot_meta_path: str  # e.g. data/snapshots/dataset_snapshot.json
 
   should_random_sample: bool
   limit: int | None
@@ -69,14 +71,15 @@ def parse_args() -> BuildArgs:
     help="Optional. If set, shuffle with seed (if provided) then take first limit rows. Requires --limit.",
   )
   parser.add_argument(
-    "--out-jsonl",
+    "--out-jsonl-path",
     required=True,
     help="Output jsonl path, e.g. data/snapshots/mini_truth.jsonl",
   )
   parser.add_argument(
-    "--snapshot-meta",
+    "--snapshot-meta-path",
     default=None,
-    help="Optional. Output snapshot meta json path.",
+    required=True,
+    help="Output snapshot meta json path.",
   )
   parser.add_argument(
     "--preview-n", type=int, default=3, help="Preview first N sample records."
@@ -157,8 +160,8 @@ def parse_args() -> BuildArgs:
     limit=limit,
     seed=seed,
     should_random_sample=should_random_sample,
-    out_jsonl_path=args.out_jsonl,
-    snapshot_meta_path=args.snapshot_meta,
+    out_jsonl_path=args.out_jsonl_path,
+    snapshot_meta_path=args.snapshot_meta_path,
     preview_n=preview_n,
     metadata_keys=metadata_keys,
     dataset_group_uid=dataset_group_uid,
@@ -185,13 +188,12 @@ def build_snapshot(args: BuildArgs) -> None:
   ensure_parent_dir(args.out_jsonl_path)
   write_jsonl(args.out_jsonl_path, sample_records)
 
-  if args.snapshot_meta_path:
-    ensure_parent_dir(args.snapshot_meta_path)
-    snap_meta = build_snapshot_meta(args, sample_records)
-    write_json(args.snapshot_meta_path, snap_meta)
-    print("****** metadata previews:")
-    print(preview_snapshot_metadata(snap_meta))
-    print()
+  ensure_parent_dir(args.snapshot_meta_path)
+  snap_meta = build_snapshot_meta(args, sample_records)
+  write_json(args.snapshot_meta_path, snap_meta)
+  print("****** metadata previews:")
+  print(preview_snapshot_metadata(snap_meta))
+  print()
 
   print("****** sample records previews:")
   print(
@@ -232,14 +234,14 @@ def generate_version(
 
 def build_snapshot_meta(
   args: BuildArgs, sample_records: list[SampleRecord]
-) -> dict[str, Any]:
+) -> DatasetSnapshotMeta:
   dataset_version = args.dataset_version
   if dataset_version is None:
     dataset_version = generate_version(
       args.should_random_sample, args.limit, args.seed
     )
 
-  snapshot_meta = {
+  snapshot_meta: DatasetSnapshotMeta = {
     "dataset_group_uid": args.dataset_group_uid,
     "adapter_name": args.adapter_name,
     "dataset_display_name": args.dataset_display_name,
@@ -256,15 +258,6 @@ def build_snapshot_meta(
     "created_at": utc_now_iso8601(),
   }
   return snapshot_meta
-
-
-def utc_now_iso8601() -> str:
-  return (
-    datetime.now(timezone.utc)
-    .replace(microsecond=0)
-    .isoformat()
-    .replace("+00:00", "Z")
-  )
 
 
 def preview_snapshot_metadata(snap_meta: dict[str, Any]) -> str:

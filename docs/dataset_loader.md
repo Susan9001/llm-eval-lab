@@ -82,12 +82,12 @@ Location: `data/snapshots/`
 
 ### Snapshot JSONL
 
-- Path: `--out-jsonl`, e.g., `data/snapshots/mini_truth.jsonl`
+- Path: `--out-jsonl-path`, e.g., `data/snapshots/mini_truth.jsonl`
 - Each line: One JSON object corresponding to a `SampleRecord`.
 
 ### Snapshot meta JSON
 
-- Path: `--snapshot-meta`, e.g., `data/snapshots/dataset_snapshot.json`
+- Path: `--snapshot-meta-path`, e.g., `data/snapshots/dataset_snapshot.json`
 - Contains metadata for traceability and reproducibility.
 
 ## How to run
@@ -106,8 +106,8 @@ PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot_cli.py \
   --input-path data/TruthfulQA.csv \
   --format csv \
   --adapter truthfulqa \
-  --out-jsonl data/snapshots/mini_truth.jsonl \
-  --snapshot-meta data/snapshots/dataset_snapshot.json \
+  --out-jsonl-path data/snapshots/mini_truth.jsonl \
+  --snapshot-meta-path data/snapshots/dataset_snapshot.json \
   --dataset-group-uid truthfulqa \
   --dataset-display-name TruthfulQA \
   --split test \
@@ -121,8 +121,8 @@ PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot_cli.py \
   --input-path data/TruthfulQA.csv \
   --format csv \
   --adapter truthfulqa \
-  --out-jsonl data/snapshots/mini_truth.jsonl \
-  --snapshot-meta data/snapshots/dataset_snapshot.json \
+  --out-jsonl-path data/snapshots/mini_truth.jsonl \
+  --snapshot-meta-path data/snapshots/dataset_snapshot.json \
   --dataset-group-uid truthfulqa \
   --dataset-display-name TruthfulQA \
   --split test \
@@ -137,9 +137,9 @@ PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot_cli.py \
 1. Dataset version (--dataset-version`)
    - If `--dataset-version` is provided, it is used as-is.
    - Otherwise, a readable version string is auto-generated (date + sampling parameters).
-2. Snapshot JSONL (`--out-jsonl`)
+2. Snapshot JSONL (`--out-jsonl-path`)
    - One JSON object per line, corresponding to one `SampleRecord`.
-3. Snapshot meta JSON (`--snapshot-meta`)
+3. Snapshot meta JSON (`--snapshot-meta-path`)
    - Records key metadata needed for traceability and reproducibility.
 
 ## Adding a New Dataset Adapter

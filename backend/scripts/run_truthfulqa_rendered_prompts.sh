@@ -11,6 +11,7 @@ BACKEND_DIR="${ROOT_DIR}/backend"
 SAMPLES_JSONL="${ROOT_DIR}/data/snapshots/mini_truth.jsonl"
 PROMPTS_DIR="${ROOT_DIR}/prompts"
 OUT_DIR="${ROOT_DIR}/reports/rendered_prompts"
+SNAPSHOT_META_PATH="${ROOT_DIR}/data/snapshots/dataset_snapshot.json"
 
 RENDER_SCRIPT="${BACKEND_DIR}/app/cli/render_prompts_cli.py"
 
@@ -44,6 +45,7 @@ python "${RENDER_SCRIPT}" \
   "${DEFAULT_PROMPT_PATHS[@]}" \
   --prompts-root "${PROMPTS_DIR}" \
   --samples-jsonl-path "${SAMPLES_JSONL}" \
+  --snapshot-meta-path "${SNAPSHOT_META_PATH}" \
   --rendered-prompts-dir "${OUT_DIR}" \
   "$@"
 

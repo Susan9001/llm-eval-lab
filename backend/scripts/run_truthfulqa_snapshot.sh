@@ -5,8 +5,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 BACKEND_DIR="${ROOT_DIR}/backend"
 
 INPUT_PATH="${ROOT_DIR}/data/TruthfulQA.csv"
-OUT_JSONL="${ROOT_DIR}/data/snapshots/mini_truth.jsonl"
-META_JSON="${ROOT_DIR}/data/snapshots/dataset_snapshot.json"
+OUT_JSONL_PATH="${ROOT_DIR}/data/snapshots/mini_truth.jsonl"
+SNAPSHOT_META_PATH="${ROOT_DIR}/data/snapshots/dataset_snapshot.json"
 
 BUILD_SCRIPT="${BACKEND_DIR}/app/cli/build_dataset_snapshot_cli.py"
 
@@ -21,8 +21,8 @@ ARGS=(
   "--input-path" "${INPUT_PATH}"
   "--format" "csv"
   "--adapter" "truthfulqa"
-  "--out-jsonl" "${OUT_JSONL}"
-  "--snapshot-meta" "${META_JSON}"
+  "--out-jsonl-path" "${OUT_JSONL_PATH}"
+  "--snapshot-meta-path" "${SNAPSHOT_META_PATH}"
   "--preview-n" "3"
   "--metadata-keys" "Type" "Category" "Source"
   "--dataset-group-uid" "truthfulqa"
