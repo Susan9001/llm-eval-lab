@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
 from time import perf_counter
+import uuid
 
 from app.generation.adapters.base import GenerationAdapter, get_adapter
 from app.generation.generation_types import (
   GenerationRequest,
   GenerationResponse,
-  ModelOutput,
+  ModelOutputRow,
   Usage,
 )
 from app.prompts.prompt_types import RenderedPrompt
@@ -32,9 +33,9 @@ def run_one_generation(
   provider: str,
   model_name: str,
   generation_params: dict[str, object] | None,
-) -> ModelOutput:
+) -> ModelOutputRow:
   """
-  Run generation for one RenderedPrompt and return one ModelOutput row.
+  Run generation for one RenderedPrompt and return one ModelOutputRow row.
   """
   params = generation_params or {}
 
@@ -69,7 +70,10 @@ def run_one_generation(
     finished_at = utc_now_iso8601()
     latency_ms = max(int((perf_counter() - start_perf) * 1000), 0)
 
+  model_output_uuid = str(uuid.uuid4())
+
   return {
+    "model_output_uuid": model_output_uuid,
     # Dataset snapshot identifier (inherited)
     "dataset_group_uid": rp["dataset_group_uid"],
     "dataset_version": rp["dataset_version"],
@@ -103,9 +107,9 @@ def iter_generation_outputs(
   model_name: str,
   generation_params: dict[str, object] | None = None,
   adapter: GenerationAdapter | None = None,
-) -> Iterator[ModelOutput]:
+) -> Iterator[ModelOutputRow]:
   """
-  Yield ModelOutput rows one-by-one (streaming friendly).
+  Yield ModelOutputRow rows one-by-one (streaming friendly).
   If adapter is None, we resolve it from registry via get_adapter(provider).
   """
   resolved_adapter = adapter or get_adapter(provider)
@@ -126,9 +130,9 @@ def run_generation(
   model_name: str,
   generation_params: dict[str, object] | None = None,
   adapter: GenerationAdapter | None = None,
-) -> list[ModelOutput]:
+) -> list[ModelOutputRow]:
   """
-  Materialize all ModelOutput rows into a list.
+  Materialize all ModelOutputRow rows into a list.
   (For day5 small datasets this is fine; for large datasets prefer iter_generation_outputs.)
   """
   return list(

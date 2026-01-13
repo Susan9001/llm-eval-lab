@@ -12,7 +12,7 @@ Evaluation lab for LLM quality and safety. Python + FastAPI + PostgreSQL + Redis
 ## Dependencies
 
 ```bash
-pip install -r requirements-dev.txt
+PYTHONPATH=backend pip install -r backend/requirements-dev.txt
 ```
 
 ## Quickstart
@@ -24,6 +24,6 @@ CLIs to generate model outputs and run eval can be found in `docs/`.
 From repo root:
 
 ```bash
-make pytest
+make test
 ```
 

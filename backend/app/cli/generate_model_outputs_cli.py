@@ -7,7 +7,7 @@ from app.utils.file_io import read_json, ensure_parent_dir, iter_rows_from_jsonl
 from app.prompts.prompt_types import RenderedPrompt
 from app.generation.generation_runner import iter_generation_outputs
 import jsonlines
-from app.generation.generation_types import ModelOutput
+from app.generation.generation_types import ModelOutputRow
 import json
 
 requred_prompt_keys = [
@@ -96,7 +96,7 @@ def load_rendered_prompts(
 
 
 def write_model_outputs_jsonl(
-  model_outputs: list[ModelOutput],
+  model_outputs: list[ModelOutputRow],
   out_jsonl_path: str,
 ) -> None:
   """Write model outputs to a local jsonl file."""

@@ -25,7 +25,8 @@ class GenerationResponse(TypedDict):
   usage_json: Usage
 
 
-class ModelOutput(DatasetSnapshotIdentifier):
+class ModelOutputRow(DatasetSnapshotIdentifier):
+  model_output_uuid: str
   source_sample_id: str
 
   prompt_group_uid: str

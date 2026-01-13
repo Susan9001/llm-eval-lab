@@ -20,7 +20,7 @@ llm-eval-lab/
         prompt_template.py                   # parse prompt path, load template, render placeholders
         prompt_types.py                      # RenderedPrompt TypedDict
       generation/
-        generation_types.py                  # GenerationRequest/Response, Usage, ModelOutput
+        generation_types.py                  # GenerationRequest/Response, Usage, ModelOutputRow
         generation_runner.py                 # run_one_generation/run_generation helpers
         adapters/
           __init__.py                        # register adapters
@@ -99,8 +99,8 @@ Prompt template rendering.
 
 Model generation (separate from evaluation/judging).
 
-- `generation_types.py`: JSONL schemas and request/response contracts (GenerationRequest, GenerationResponse, Usage, ModelOutput).
-- `generation_runner.py`: helper functions that call an adapter and build ModelOutput rows.
+- `generation_types.py`: JSONL schemas and request/response contracts (GenerationRequest, GenerationResponse, Usage, ModelOutputRow).
+- `generation_runner.py`: helper functions that call an adapter and build ModelOutputRow rows.
 - `adapters/: provider` adapters + a registry for lookup by provider.
 
 **backend/app/services**

@@ -1,13 +1,13 @@
 # Model Output Generation
 
-This codepath turns rendered prompts into model outputs by calling a generation provider (mock provider supported today). The output is a JSONL file where each line is one `ModelOutput`.
+This codepath turns rendered prompts into model outputs by calling a generation provider (mock provider supported today). The output is a JSONL file where each line is one `ModelOutputRow`.
 
 ## Where Things Live
 
 Recommended layout:
 
 1. `backend/app/generation/generation_types.py`  
-   Core TypedDict schemas (`GenerationRequest`, `GenerationResponse`, `Usage`, `ModelOutput`).
+   Core TypedDict schemas (`GenerationRequest`, `GenerationResponse`, `Usage`, `ModelOutputRow`).
 2. `backend/app/generation/generation_runner.py`  
    Small orchestration helpers (`run_one_generation`, `run_generation`, and optional iterators).
 3. `backend/app/generation/adapters/`  
@@ -53,8 +53,9 @@ Example:
 
 - `reports/model_outputs/truthfulqa_generation_base/v1.jsonl`
 
-Each line is a `ModelOutput` JSON object. Minimum required fields:
+Each line is a `ModelOutputRow` JSON object. Minimum required fields:
 
+- `model_output_uuid`
 - `dataset_group_uid`
 - `dataset_version`
 - `split`
@@ -111,7 +112,7 @@ Suggested fields:
 - `finish_reason`: string or null
 - `cost_usd`: float or null
 
-### ModelOutput
+### ModelOutputRow
 
 A self-describing output row that combines dataset identity, prompt identity, provider info, and the generation result.
 
@@ -155,5 +156,5 @@ pytest backend/tests/test_generation_runner.py -q
 
 ## Design notes
 
-- Generation outputs are intentionally separate from evaluation outputs (judge results). `ModelOutput` captures what the model produced; evaluation results belong in `eval_results`.
+- Generation outputs are intentionally separate from evaluation outputs (judge results). `ModelOutputRow` captures what the model produced; evaluation results belong in `eval_results`.
 - Caching is intentionally not part of the minimal local pipeline. It can be added later when DB persistence and repeated runs make cache value obvious.

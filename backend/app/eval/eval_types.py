@@ -1,0 +1,79 @@
+# backend/app/judges/judge_types.py
+from __future__ import annotations
+
+from typing import Literal, TypedDict
+
+from app.prompts.prompt_types import RenderedPromptIdentifier
+
+
+JudgeType = Literal["rule", "llm"]
+
+
+class EvalRequest(RenderedPromptIdentifier):
+  """
+  A single unit of evaluation.
+
+  Built by joining:
+    RenderedPrompt (input_text, reference_output, prompt identity)
+    ModelOutputRow (output_text, generation_status, provider/model identity)
+  """
+
+  model_output_uuid: str
+
+  provider: str
+  model_name: str
+  generation_params: dict[str, object] | None
+
+  generation_status: str
+  generation_error_message: str | None
+
+  input_text: str | None
+  reference_output: str | None
+  output_text: str | None
+
+  # For LLM-as-judge only.
+  rendered_eval_prompt: str | None
+
+
+class RuleOutcome(TypedDict):
+  """
+  Output of a single rule.
+
+  score:
+    Prefer 0.0 to 1.0.
+    Use None when SKIPPED or ERROR.
+  """
+
+  status: str
+  score: float | None
+  rationale: str | None
+  error_message: str | None
+
+
+class EvalResultRow(RenderedPromptIdentifier):
+  """
+  One row to write into eval_results.jsonl.
+  """
+
+  model_output_uuid: str
+
+  provider: str
+  model_name: str
+
+  judge_type: JudgeType
+  judge_name: str
+  judge_version: str | None
+
+  eval_status: str
+  eval_error_message: str | None
+
+  # rule_name -> outcome
+  rule_outcomes: dict[str, RuleOutcome]
+
+  # Convenience fields for aggregation and thresholding.
+  primary_score_rule: str | None
+  primary_score: float | None
+
+  started_at: str
+  finished_at: str
+  latency_ms: int | None
