@@ -17,6 +17,7 @@ Below is the important directory layout. Some folders are scaffolding for later 
 llm-eval-lab/
   backend/
     app/
+     api/                                    # eval config files, json or yaml
       cli/
         build_dataset_snapshot_cli.py        # build local dataset snapshot jsonl + meta
         render_prompts_cli.py                # render prompt templates with local samples jsonl
@@ -39,8 +40,10 @@ llm-eval-lab/
       services/                              # store-oriented services (Postgres/Redis), later phases
       utils/
         file_io.py                           # shared file helpers
-        time_utils.py                        # utc_now_iso8601 and latency helpers
-      db.py                                  # SQLAlchemy engine/session helpers (later phases)
+        time_utils.py                        # utc_now_iso8601 helpers
+      api/                                   # api for later phases
+      workers/                               # async workers for later phases
+      db.py                                  # SQLAlchemy engine/session helpers
     scripts/
       run_truthfulqa_snapshot.sh             # one-click: build TruthfulQA snapshot
       run_truthfulqa_rendered_prompts.sh     # one-click: render prompts v1/v2 for mini snapshot
