@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install test tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements-dev.txt
+
+      - name: Lint
+        working-directory: backend
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Bring up Postgres/Redis
+        run: docker compose up -d
+
+      - name: Wait for Postgres
+        run: |
+          until docker exec llm-eval-postgres pg_isready -U llm_eval -d llm_eval_db; do
+            sleep 1
+          done
+
+      - name: Run migrations
+        working-directory: backend
+        env:
+          POSTGRES_USER: llm_eval
+          POSTGRES_PASSWORD: llm_eval_password
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: "5432"
+          POSTGRES_DB: llm_eval_db
+        run: alembic upgrade head
+
+      - name: Test
+        working-directory: backend
+        env:
+          POSTGRES_USER: llm_eval
+          POSTGRES_PASSWORD: llm_eval_password
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: "5432"
+          POSTGRES_DB: llm_eval_db
+        run: pytest -q
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v
