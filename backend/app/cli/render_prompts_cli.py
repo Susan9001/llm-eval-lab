@@ -5,7 +5,7 @@ from pathlib import Path
 
 import jsonlines
 
-from app.datasets.dataset_loader import iter_rows_from_jsonl
+from app.utils.file_io import iter_rows_from_jsonl
 from app.datasets.dataset_types import (
   SampleRecord,
   DatasetSnapshotMeta,
@@ -19,6 +19,8 @@ from app.prompts.prompt_template import (
   render_prompt,
 )
 from app.utils.file_io import ensure_parent_dir, read_json
+
+required_sample_keys = ["source_sample_id", "input_text"]
 
 
 @dataclass(frozen=True)
@@ -103,28 +105,10 @@ def parse_args() -> RenderPromptsCliArgs:
 def load_samples(samples_jsonl_path: str) -> list[SampleRecord]:
   """Load SampleRecord rows from a local snapshot jsonl."""
   sample_records: list[SampleRecord] = []
-  for row in iter_rows_from_jsonl(samples_jsonl_path):
-    if not isinstance(row, dict):
-      raise ValueError("Each jsonl line must be a JSON object.")
-
-    source_sample_id = row.get("source_sample_id")
-    input_text = row.get("input_text")
-    reference_output = row.get("reference_output")
-
-    if source_sample_id is None:
-      raise ValueError("Missing required field: source_sample_id")
-    if input_text is None:
-      raise ValueError("Missing required field: input_text")
-
-    record: SampleRecord = {
-      "source_sample_id": str(source_sample_id),
-      "input_text": str(input_text),
-      "reference_output": str(reference_output)
-      if reference_output is not None
-      else None,
-      "metadata": row.get("metadata"),
-    }
-    sample_records.append(record)
+  for row in iter_rows_from_jsonl(
+    samples_jsonl_path, required_keys=required_sample_keys
+  ):
+    sample_records.append(row)
 
   return sample_records
 

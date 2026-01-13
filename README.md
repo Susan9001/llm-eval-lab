@@ -20,31 +20,37 @@ llm-eval-lab/
       cli/
         build_dataset_snapshot_cli.py        # build local dataset snapshot jsonl + meta
         render_prompts_cli.py                # render prompt templates with local samples jsonl
+        generate_model_outputs_cli.py        # run generation on rendered prompts and write model outputs jsonl
       datasets/
         adapters/                            # dataset-specific parsing and normalization
           truthfulqa.py
         dataset_loader.py                    # iterators for csv/jsonl loading
-        dataset_types.py                     # TypedDict records for dataset rows
+        dataset_types.py                     # TypedDict records for dataset rows and snapshot meta
       prompts/
         prompt_template.py                   # parse prompt path, load template, render placeholders
-      services/                              # External stores (DB or Redis) oriented services, mostly for later phases and not implemented yet.
-        datasets_service.py
-        samples_service.py
-        prompts_service.py
-        model_outputs_service.py
-        eval_runs_service.py
-        eval_results_service.py
+        prompt_types.py                      # RenderedPrompt TypedDict
+      generation/
+        generation_types.py                  # GenerationRequest/Response, Usage, ModelOutput
+        generation_runner.py                 # run_one_generation/run_generation helpers
+        adapters/
+          __init__.py                        # register adapters
+          base.py                            # adapter Protocol + registry
+          mock_adapter.py                    # mock provider implementation
+      services/                              # store-oriented services (Postgres/Redis), later phases
       utils/
-        file_io.py                           # shared file helpers, e.g. ensure_parent_dir, read/write json
+        file_io.py                           # shared file helpers
+        time_utils.py                        # utc_now_iso8601 and latency helpers
       db.py                                  # SQLAlchemy engine/session helpers (later phases)
     scripts/
       run_truthfulqa_snapshot.sh             # one-click: build TruthfulQA snapshot
       run_truthfulqa_rendered_prompts.sh     # one-click: render prompts v1/v2 for mini snapshot
+      run_truthfulqa_model_outputs.sh        # one-click: generate model outputs from rendered prompts
     tests/
       test_build_dataset_snapshot_cli.py
       test_dataset_loader.py
       test_prompt_rendering.py
       test_render_prompts_cli.py
+      test_generation_runner.py
       test_smoke.py
       test_smoke_db_seed.py
     alembic.ini
@@ -52,7 +58,8 @@ llm-eval-lab/
     migrations/                              # alembic migrations (later phases)
   data/
     snapshots/                               # local dataset snapshot artifacts
-      mini_truth.jsonl                       # example mini snapshot
+      mini_truth.jsonl
+      dataset_snapshot.json
   prompts/
     truthfulqa_generation_base/
       v1.txt
@@ -62,7 +69,13 @@ llm-eval-lab/
       truthfulqa_generation_base/
         v1.jsonl
         v2.jsonl
+    model_outputs/
+      truthfulqa_generation_base/
+        v1.jsonl
   docs/
+    dataset_loader.md
+    prompt_rendering.md
+    model_output_generation.md
   docker-compose.yml
   Makefile
   README.md
@@ -90,11 +103,23 @@ Prompt template rendering.
 
 - `prompt_template.py`: defines prompt path conventions, reads `.txt`, and renders placeholders by simple replacement.
 
+**backend/app/generation**
+
+Model generation (separate from evaluation/judging).
+
+- `generation_types.py`: JSONL schemas and request/response contracts (GenerationRequest, GenerationResponse, Usage, ModelOutput).
+- `generation_runner.py`: helper functions that call an adapter and build ModelOutput rows.
+- `adapters/: provider` adapters + a registry for lookup by provider.
+
+**backend/app/services**
+Store-oriented service layer (PostgreSQL/Redis). This is intentionally minimal early on.
+
 **backend/app/utils**
 
 Shared file utilities.
 
 - `file_io.py`: helpers like `ensure_parent_dir`, `read_json`, `write_json`.
+- `time_utils.py`: timestamp helpers.
 
 **backend/scripts**
 

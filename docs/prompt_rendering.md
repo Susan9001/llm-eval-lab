@@ -141,21 +141,13 @@ PYTHONPATH=backend python backend/app/cli/render_prompts_cli.py \
   --rendered-prompts-dir reports/rendered_prompts
 ```
 
-### Tests
+### Run tests:
 
 Relevant tests:
 
-- `backend/tests/test_prompt_rendering.py`
-  - tests `parse_prompt_path`
-  - tests `render_prompt`
-- `backend/tests/test_render_prompts_cli.py`
-  - tests `render_and_write_one_prompt`
-  - tests end-to-end `render_prompts`
-
-Run all tests:
-
 ```bash
-make test
+pytest backend/tests/test_prompt_rendering.py -q
+pytest backend/tests/test_render_prompts_cli.py -q
 ```
 
 ## Future work

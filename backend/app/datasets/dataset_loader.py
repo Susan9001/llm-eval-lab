@@ -1,11 +1,10 @@
-from typing import Iterable, TypeVar
-import csv
-import json
+from typing import TypeVar
+from collections.abc import Iterable
 import random
-from pathlib import Path
 
 from app.datasets.dataset_types import SampleRecord, AdapterFn, RawRow
 from app.datasets.adapters.truthfulqa import adapt_truthfulqa_row
+from app.utils.file_io import iter_rows_from_jsonl, iter_rows_from_csv
 
 
 T = TypeVar("T")
@@ -44,37 +43,6 @@ def get_adapter(adapter_name: str) -> AdapterFn:
   if adapter_name == "truthfulqa":
     return adapt_truthfulqa_row
   raise ValueError(f"No adapter for {adapter_name}.")
-
-
-def iter_rows_from_csv(input_path: str) -> Iterable[RawRow]:
-  path = Path(input_path)
-  if path.suffix != ".csv":
-    raise ValueError(
-      f"Invalid dataset file. Expected a .csv file. Got: {input_path}"
-    )
-  if not path.is_file():
-    raise FileNotFoundError(f"Dataset file not found: {input_path}")
-
-  with path.open("r", newline="", encoding="utf-8-sig") as file:
-    reader = csv.DictReader(file)
-    for row in reader:
-      yield row
-
-
-def iter_rows_from_jsonl(input_path: str) -> Iterable[RawRow]:
-  path = Path(input_path)
-  if path.suffix != ".jsonl":
-    raise ValueError(
-      f"Invalid dataset file. Expected a .jsonl file. Got: {input_path}"
-    )
-  if not path.is_file():
-    raise FileNotFoundError(f"Dataset file not found: {input_path}")
-
-  with path.open("r", newline="", encoding="utf-8-sig") as file:
-    for line in file:
-      line = line.strip()
-      if line:
-        yield json.loads(line)
 
 
 def apply_sampling(

@@ -162,6 +162,12 @@ PYTHONPATH=backend python backend/app/datasets/build_dataset_snapshot_cli.py \
   --seed 42
 ```
 
+### Run tests
+
+```bash
+pytest backend/tests/test_dataset_loader.py -q
+pytest backend/tests/test_build_dataset_snapshot_cli.py -q
+```
 
 ## Artifacts
 
