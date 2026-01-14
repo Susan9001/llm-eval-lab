@@ -4,7 +4,10 @@ from collections.abc import Iterable, Iterator
 from time import perf_counter
 import uuid
 
-from app.generation.adapters.base import GenerationAdapter, get_gen_model_adapter
+from app.generation.adapters.base import (
+  GenerationAdapter,
+  get_gen_model_adapter,
+)
 from app.generation.generation_types import (
   GenerationRequest,
   GenerationResponse,
@@ -17,14 +20,14 @@ from app.utils.time_utils import utc_now_iso8601
 
 
 def _empty_usage() -> Usage:
-  return {
-    "prompt_tokens": None,
-    "completion_tokens": None,
-    "total_tokens": None,
-    "provider_request_id": None,
-    "finish_reason": None,
-    "cost_usd": None,
-  }
+  return Usage(
+    prompt_tokens=None,
+    completion_tokens=None,
+    total_tokens=None,
+    provider_request_id=None,
+    finish_reason=None,
+    cost_usd=None,
+  )
 
 
 def run_one_generation(
@@ -49,12 +52,12 @@ def run_one_generation(
   usage_json: Usage
 
   try:
-    req: GenerationRequest = {
-      "rendered_prompt": rp["rendered_prompt"],
-      "provider": provider,
-      "model_name": model_name,
-      "generation_params": params,
-    }
+    req: GenerationRequest = GenerationRequest(
+      rendered_prompt=rp["rendered_prompt"],
+      provider=provider,
+      model_name=model_name,
+      generation_params=params,
+    )
 
     resp: GenerationResponse = adapter.generate(req)
 
@@ -73,32 +76,32 @@ def run_one_generation(
 
   model_output_uuid = str(uuid.uuid4())
 
-  return {
-    "model_output_uuid": model_output_uuid,
+  return ModelOutputRow(
+    model_output_uuid=model_output_uuid,
     # Dataset snapshot identifier (inherited)
-    "dataset_group_uid": rp["dataset_group_uid"],
-    "dataset_version": rp["dataset_version"],
-    "split": rp["split"],
+    dataset_group_uid=rp["dataset_group_uid"],
+    dataset_version=rp["dataset_version"],
+    split=rp["split"],
     # Sample identifier
-    "source_sample_id": rp["source_sample_id"],
+    source_sample_id=rp["source_sample_id"],
     # Prompt identity
-    "prompt_group_uid": rp["prompt_group_uid"],
-    "prompt_version": rp["prompt_version"],
-    "prompt_path": rp.get("prompt_path"),
+    prompt_group_uid=rp["prompt_group_uid"],
+    prompt_version=rp["prompt_version"],
+    prompt_path=rp.get("prompt_path"),
     # Model invocation config
-    "provider": provider,
-    "model_name": model_name,
-    "generation_params": params,
+    provider=provider,
+    model_name=model_name,
+    generation_params=params,
     # Model results
-    "output_text": output_text,
-    "generation_status": generation_status,
-    "generation_error_message": generation_error_message,
-    "usage_json": usage_json,
+    output_text=output_text,
+    generation_status=generation_status,
+    generation_error_message=generation_error_message,
+    usage_json=usage_json,
     # Timing
-    "started_at": started_at,
-    "finished_at": finished_at,
-    "latency_ms": latency_ms,
-  }
+    started_at=started_at,
+    finished_at=finished_at,
+    latency_ms=latency_ms,
+  )
 
 
 def iter_generation_outputs(

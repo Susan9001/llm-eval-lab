@@ -62,9 +62,9 @@ def extract_dataset_snapshot_identifier(
   """
   Extract minimal dataset identity info from full snapshot metadata.
   """
-  identifier: DatasetSnapshotIdentifier = {
-    "dataset_group_uid": meta["dataset_group_uid"],
-    "dataset_version": meta["dataset_version"],
-    "split": meta["split"],
-  }
+  identifier: DatasetSnapshotIdentifier = DatasetSnapshotIdentifier(
+    dataset_group_uid=meta["dataset_group_uid"],
+    dataset_version=meta["dataset_version"],
+    split=meta["split"],
+  )
   return identifier

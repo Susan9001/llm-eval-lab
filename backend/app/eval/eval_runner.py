@@ -59,30 +59,30 @@ def build_eval_request(rp: RenderedPrompt, mo: ModelOutputRow) -> EvalRequest:
   if prompt_path is None:
     prompt_path = rp.get("prompt_path")
 
-  return {
-    "dataset_group_uid": rp["dataset_group_uid"],
-    "dataset_version": rp["dataset_version"],
-    "split": rp["split"],
-    "source_sample_id": rp["source_sample_id"],
-    "prompt_group_uid": rp["prompt_group_uid"],
-    "prompt_version": rp["prompt_version"],
-    "prompt_path": prompt_path,
+  return EvalRequest(
+    dataset_group_uid=rp["dataset_group_uid"],
+    dataset_version=rp["dataset_version"],
+    split=rp["split"],
+    source_sample_id=rp["source_sample_id"],
+    prompt_group_uid=rp["prompt_group_uid"],
+    prompt_version=rp["prompt_version"],
+    prompt_path=prompt_path,
     # Model output identity
-    "model_output_uuid": mo["model_output_uuid"],
+    model_output_uuid=mo["model_output_uuid"],
     # Model identity
-    "provider": mo["provider"],
-    "model_name": mo["model_name"],
-    "generation_params": mo.get("generation_params"),
+    provider=mo["provider"],
+    model_name=mo["model_name"],
+    generation_params=mo.get("generation_params"),
     # Generation status
-    "generation_status": mo["generation_status"],
-    "generation_error_message": mo.get("generation_error_message"),
+    generation_status=mo["generation_status"],
+    generation_error_message=mo.get("generation_error_message"),
     # Payloads for judging
-    "input_text": rp.get("input_text"),
-    "reference_output": rp.get("reference_output"),
-    "output_text": mo.get("output_text"),
+    input_text=rp.get("input_text"),
+    reference_output=rp.get("reference_output"),
+    output_text=mo.get("output_text"),
     # For LLM-as-judge only (kept for extensibility)
-    "rendered_eval_prompt": None,
-  }
+    rendered_eval_prompt=None,
+  )
 
 
 def build_failed_eval_result(
@@ -96,30 +96,30 @@ def build_failed_eval_result(
   """
   Build a minimal EvalResultRow when adapter.evaluate raises unexpectedly.
   """
-  return {
-    "dataset_group_uid": req["dataset_group_uid"],
-    "dataset_version": req["dataset_version"],
-    "split": req["split"],
-    "source_sample_id": req["source_sample_id"],
-    "prompt_group_uid": req["prompt_group_uid"],
-    "prompt_version": req["prompt_version"],
-    "prompt_path": req.get("prompt_path"),
-    "model_output_uuid": req["model_output_uuid"],
-    "provider": req["provider"],
-    "model_name": req["model_name"],
-    "judge_type": judge_type,
-    "judge_name": judge_name,
-    "judge_version": judge_version,
-    "eval_status": EVAL_STATUS_FAILED,
-    "eval_error_message": error_message,
-    "rule_outcomes": {},
-    "primary_score_rule": None,
-    "primary_score": None,
+  return EvalResultRow(
+    dataset_group_uid=req["dataset_group_uid"],
+    dataset_version=req["dataset_version"],
+    split=req["split"],
+    source_sample_id=req["source_sample_id"],
+    prompt_group_uid=req["prompt_group_uid"],
+    prompt_version=req["prompt_version"],
+    prompt_path=req.get("prompt_path"),
+    model_output_uuid=req["model_output_uuid"],
+    provider=req["provider"],
+    model_name=req["model_name"],
+    judge_type=judge_type,
+    judge_name=judge_name,
+    judge_version=judge_version,
+    eval_status=EVAL_STATUS_FAILED,
+    eval_error_message=error_message,
+    rule_outcomes={},
+    primary_score_rule=None,
+    primary_score=None,
     # Runner will overwrite timing fields
-    "started_at": utc_now_iso8601(),
-    "finished_at": utc_now_iso8601(),
-    "latency_ms": 0,
-  }
+    started_at=utc_now_iso8601(),
+    finished_at=utc_now_iso8601(),
+    latency_ms=0,
+  )
 
 
 def run_one_eval(
@@ -198,13 +198,12 @@ def iter_eval_results(
     rp = rendered_prompts_by_key.get(key)
     if rp is None:
       raise ValueError(
-          "Missing rendered prompt for model output row. "
-          f"model_output_uuid={mo['model_output_uuid']}, "
-          f"provider={mo['provider']}, "
-          f"model_name={mo['model_name']}, "
-          f"rendered_prompt_key={key}"
+        "Missing rendered prompt for model output row. "
+        f"model_output_uuid={mo['model_output_uuid']}, "
+        f"provider={mo['provider']}, "
+        f"model_name={mo['model_name']}, "
+        f"rendered_prompt_key={key}"
       )
-
 
     yield run_one_eval(
       adapter,

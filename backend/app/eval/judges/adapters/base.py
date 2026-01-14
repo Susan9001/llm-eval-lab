@@ -13,7 +13,9 @@ JudgeAdapterBuilder = Callable[..., JudgeAdapter]
 ADAPTER_REGISTRY: dict[JudgeType, JudgeAdapterBuilder] = {}
 
 
-def register_adapter(judge_type: JudgeType, builder: JudgeAdapterBuilder) -> None:
+def register_adapter(
+  judge_type: JudgeType, builder: JudgeAdapterBuilder
+) -> None:
   ADAPTER_REGISTRY[judge_type] = builder
 
 

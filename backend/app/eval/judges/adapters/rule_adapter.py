@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from app.eval.eval_types import EvalRequest, EvalResultRow, RuleOutcome, JUDGE_TYPE_RULE
+from app.eval.eval_types import (
+  EvalRequest,
+  EvalResultRow,
+  RuleOutcome,
+  JUDGE_TYPE_RULE,
+)
 from app.eval.judges.rules.base import build_rules
 from app.eval.statuses import (
   EVAL_STATUS_FAILED,
@@ -59,20 +64,24 @@ class RuleAdapter:
           try:
             rule_outcomes[rule.name] = rule.apply(req)
           except Exception as e:
-            rule_outcomes[rule.name] = {
-              "status": RULE_STATUS_FAILED,
-              "score": None,
-              "rationale": None,
-              "error_message": f"{type(e).__name__}: {e}"
-            }
+            rule_outcomes[rule.name] = RuleOutcome(
+              status=RULE_STATUS_FAILED,
+              score=None,
+              rationale=None,
+              error_message=f"{type(e).__name__}: {e}",
+            )
 
         if primary_score_rule is not None:
           outcome = rule_outcomes.get(primary_score_rule)
-          if outcome is not None and outcome.get("status") == RULE_STATUS_SUCCEEDED:
+          if (
+            outcome is not None
+            and outcome.get("status") == RULE_STATUS_SUCCEEDED
+          ):
             primary_score = outcome.get("score")
 
         if any(
-          outcome.get("status") == RULE_STATUS_FAILED for outcome in rule_outcomes.values()
+          outcome.get("status") == RULE_STATUS_FAILED
+          for outcome in rule_outcomes.values()
         ):
           eval_status = EVAL_STATUS_FAILED
           eval_error_message = "One or more rules failed."
@@ -83,30 +92,30 @@ class RuleAdapter:
       eval_status = EVAL_STATUS_FAILED
       eval_error_message = str(e)
 
-    res: EvalResultRow = {
+    res: EvalResultRow = EvalResultRow(
       # RenderedPromptIdentifier fields (inherited)
-      "dataset_group_uid": req["dataset_group_uid"],
-      "dataset_version": req["dataset_version"],
-      "split": req["split"],
-      "source_sample_id": req["source_sample_id"],
-      "prompt_group_uid": req["prompt_group_uid"],
-      "prompt_version": req["prompt_version"],
-      "prompt_path": req.get("prompt_path"),
+      dataset_group_uid=req["dataset_group_uid"],
+      dataset_version=req["dataset_version"],
+      split=req["split"],
+      source_sample_id=req["source_sample_id"],
+      prompt_group_uid=req["prompt_group_uid"],
+      prompt_version=req["prompt_version"],
+      prompt_path=req.get("prompt_path"),
       # Trace to one concrete output
-      "model_output_uuid": req["model_output_uuid"],
+      model_output_uuid=req["model_output_uuid"],
       # Model identity
-      "provider": req["provider"],
-      "model_name": req["model_name"],
+      provider=req["provider"],
+      model_name=req["model_name"],
       # Judge identity
-      "judge_type": JUDGE_TYPE_RULE,
-      "judge_name": self._judge_name,
-      "judge_version": self._judge_version,
+      judge_type=JUDGE_TYPE_RULE,
+      judge_name=self._judge_name,
+      judge_version=self._judge_version,
       # Status
-      "eval_status": eval_status,
-      "eval_error_message": eval_error_message,
+      eval_status=eval_status,
+      eval_error_message=eval_error_message,
       # Rule results
-      "rule_outcomes": rule_outcomes,
-      "primary_score_rule": primary_score_rule,
-      "primary_score": primary_score,
-    }
+      rule_outcomes=rule_outcomes,
+      primary_score_rule=primary_score_rule,
+      primary_score=primary_score,
+    )
     return res

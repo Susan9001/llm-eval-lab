@@ -19,21 +19,21 @@ class ExactMatchReferenceRule:
 
     # Skip if reference is missing
     if reference_output is None:
-      return {
-        "status": RULE_STATUS_SKIPPED,
-        "score": None,
-        "rationale": "Reference output is missing",
-        "error_message": None,
-      }
+      return RuleOutcome(
+        status=RULE_STATUS_SKIPPED,
+        score=None,
+        rationale="Reference output is missing",
+        error_message=None,
+      )
 
     # Skip if model output is missing
     if output_text is None:
-      return {
-        "status": RULE_STATUS_SKIPPED,
-        "score": None,
-        "rationale": "Model output is missing",
-        "error_message": None,
-      }
+      return RuleOutcome(
+        status=RULE_STATUS_SKIPPED,
+        score=None,
+        rationale="Model output is missing",
+        error_message=None,
+      )
 
     # Compare after normalization
     normalized_ref = self._normalize(reference_output)
@@ -41,16 +41,16 @@ class ExactMatchReferenceRule:
     matches = normalized_ref == normalized_output
 
     if matches:
-      return {
-        "status": RULE_STATUS_SUCCEEDED,
-        "score": 1.0,
-        "rationale": "Output matches reference after normalization",
-        "error_message": None,
-      }
+      return RuleOutcome(
+        status=RULE_STATUS_SUCCEEDED,
+        score=1.0,
+        rationale="Output matches reference after normalization",
+        error_message=None,
+      )
     else:
-      return {
-        "status": RULE_STATUS_SUCCEEDED,
-        "score": 0.0,
-        "rationale": "Output does not match reference after normalization.",
-        "error_message": None,
-      }
+      return RuleOutcome(
+        status=RULE_STATUS_SUCCEEDED,
+        score=0.0,
+        rationale="Output does not match reference after normalization.",
+        error_message=None,
+      )

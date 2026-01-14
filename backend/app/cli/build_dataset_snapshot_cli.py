@@ -240,22 +240,22 @@ def build_snapshot_meta(
       args.should_random_sample, args.limit, args.seed
     )
 
-  snapshot_meta: DatasetSnapshotMeta = {
-    "dataset_group_uid": args.dataset_group_uid,
-    "adapter_name": args.adapter_name,
-    "dataset_display_name": args.dataset_display_name,
-    "dataset_version": dataset_version,
-    "input_path": args.input_path,
-    "file_format": args.file_format,
-    "num_samples": len(sample_records),
-    "split": args.split,
-    "sampling": {
+  snapshot_meta: DatasetSnapshotMeta = DatasetSnapshotMeta(
+    dataset_group_uid=args.dataset_group_uid,
+    adapter_name=args.adapter_name,
+    dataset_display_name=args.dataset_display_name,
+    dataset_version=dataset_version,
+    input_path=args.input_path,
+    file_format=args.file_format,
+    num_samples=len(sample_records),
+    split=args.split,
+    sampling={
       "should_random_sample": args.should_random_sample,
       "limit": args.limit,
       "seed": args.seed,
     },
-    "created_at": utc_now_iso8601(),
-  }
+    created_at=utc_now_iso8601(),
+  )
   return snapshot_meta
 
 

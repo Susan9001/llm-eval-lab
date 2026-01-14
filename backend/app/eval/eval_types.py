@@ -9,6 +9,7 @@ JudgeType = Literal["rule", "llm"]
 JUDGE_TYPE_RULE: JudgeType = "rule"
 JUDGE_TYPE_LLM: JudgeType = "llm"
 
+
 class EvalRequest(RenderedPromptIdentifier):
   """
   A single unit of evaluation.
@@ -38,7 +39,7 @@ class EvalRequest(RenderedPromptIdentifier):
 class RuleOutcome(TypedDict):
   """
   Output of a single rule.
- 
+
   score:
     Prefer 0.0 to 1.0.
     Use None when SKIPPED or ERROR.

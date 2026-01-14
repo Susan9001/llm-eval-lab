@@ -127,4 +127,6 @@ def test_run_generation_batch_len_and_order():
   )
 
   assert [o["source_sample_id"] for o in outs] == ["a", "b", "c"]
-  assert all(o["generation_status"] == GENERATION_STATUS_SUCCEEDED for o in outs)
+  assert all(
+    o["generation_status"] == GENERATION_STATUS_SUCCEEDED for o in outs
+  )
