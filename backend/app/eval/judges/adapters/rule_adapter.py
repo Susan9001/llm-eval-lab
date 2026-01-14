@@ -88,6 +88,9 @@ class RuleAdapter:
       # Model identity
       provider=req["provider"],
       model_name=req["model_name"],
+      # Generation status
+      generation_status=req["generation_status"],
+      generation_error_message=req.get("generation_error_message"),
       # Judge identity
       judge_type=JUDGE_TYPE_RULE,
       judge_name=self._judge_name,

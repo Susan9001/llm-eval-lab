@@ -107,6 +107,8 @@ def build_failed_eval_result(
     model_output_uuid=req["model_output_uuid"],
     provider=req["provider"],
     model_name=req["model_name"],
+    generation_status=req["generation_status"],
+    generation_error_message=req.get("generation_error_message"),
     judge_type=judge_type,
     judge_name=judge_name,
     judge_version=judge_version,

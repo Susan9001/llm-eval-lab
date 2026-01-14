@@ -71,6 +71,9 @@ def test_evaluate_generation_not_succeeded_marks_eval_failed(monkeypatch):
   assert res["rule_outcomes"] == {}
   assert res["eval_error_message"] is not None
   assert "generation_status=" in res["eval_error_message"]
+  # Generation status fields should be copied
+  assert res["generation_status"] == "FAILED"
+  assert res["generation_error_message"] == "gen failed"
 
 
 def test_evaluate_all_rules_succeeded_eval_succeeded(monkeypatch):
@@ -99,6 +102,9 @@ def test_evaluate_all_rules_succeeded_eval_succeeded(monkeypatch):
   assert res["eval_error_message"] is None
   assert "r_ok" in res["rule_outcomes"]
   assert res["rule_outcomes"]["r_ok"]["status"] == RULE_STATUS_SUCCEEDED
+  # Generation status fields should be copied
+  assert res["generation_status"] == GENERATION_STATUS_SUCCEEDED
+  assert res["generation_error_message"] == "gen failed"
 
 
 def test_evaluate_one_rule_throws_marks_rule_failed_and_eval_failed(
@@ -137,3 +143,6 @@ def test_evaluate_one_rule_throws_marks_rule_failed_and_eval_failed(
   assert "RuntimeError" in (
     res["rule_outcomes"]["r_boom"]["error_message"] or ""
   )
+  # Generation status fields should be copied
+  assert res["generation_status"] == GENERATION_STATUS_SUCCEEDED
+  assert res["generation_error_message"] == "gen failed"

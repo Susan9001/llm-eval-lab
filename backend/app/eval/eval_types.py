@@ -61,6 +61,10 @@ class EvalResultRow(RenderedPromptIdentifier):
   provider: str
   model_name: str
 
+  # Generation status from ModelOutputRow
+  generation_status: str
+  generation_error_message: str | None
+
   judge_type: JudgeType
   judge_name: str
   judge_version: str | None
