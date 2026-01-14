@@ -1,10 +1,10 @@
 from time import sleep
+from app.common.statuses import GENERATION_STATUS_SUCCEEDED
 from app.generation.generation_types import (
   GenerationRequest,
   GenerationResponse,
   Usage,
 )
-from app.generation.statuses import GENERATION_STATUS_SUCCEEDED
 
 
 class MockAdapter:

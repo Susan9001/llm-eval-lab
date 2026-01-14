@@ -1,5 +1,5 @@
+from app.common.statuses import RULE_STATUS_SUCCEEDED
 from app.eval.eval_types import EvalRequest, RuleOutcome
-from app.eval.statuses import RULE_STATUS_SUCCEEDED
 
 
 class NonEmptyOutputRule:

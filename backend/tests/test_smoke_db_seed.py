@@ -6,8 +6,8 @@ from datetime import datetime, timezone
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.common.statuses import GENERATION_STATUS_SUCCEEDED
 from app.db import get_engine
-from app.generation.statuses import GENERATION_STATUS_SUCCEEDED
 from app.models.schema import (
   Dataset,
   Sample,

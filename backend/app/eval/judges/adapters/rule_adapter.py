@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+from app.common.statuses import (
+  EVAL_STATUS_FAILED,
+  EVAL_STATUS_SUCCEEDED,
+  GENERATION_STATUS_SUCCEEDED,
+  RULE_STATUS_FAILED,
+)
 from app.eval.eval_types import (
   EvalRequest,
   EvalResultRow,
@@ -7,12 +13,6 @@ from app.eval.eval_types import (
   JUDGE_TYPE_RULE,
 )
 from app.eval.judges.rules.base import build_rules
-from app.eval.statuses import (
-  EVAL_STATUS_FAILED,
-  EVAL_STATUS_SUCCEEDED,
-  RULE_STATUS_FAILED,
-)
-from app.generation.statuses import GENERATION_STATUS_SUCCEEDED
 
 
 class RuleAdapter:

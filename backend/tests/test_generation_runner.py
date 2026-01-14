@@ -4,16 +4,16 @@ from __future__ import annotations
 from time import sleep
 
 
+from app.common.statuses import (
+  GENERATION_STATUS_FAILED,
+  GENERATION_STATUS_SUCCEEDED,
+)
+from app.generation.adapters.base import GenerationAdapter
 from app.generation.generation_runner import run_one_generation, run_generation
 from app.generation.generation_types import (
   GenerationRequest,
   GenerationResponse,
   Usage,
-)
-from app.generation.adapters.base import GenerationAdapter
-from app.generation.statuses import (
-  GENERATION_STATUS_FAILED,
-  GENERATION_STATUS_SUCCEEDED,
 )
 
 

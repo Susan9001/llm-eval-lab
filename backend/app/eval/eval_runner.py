@@ -3,9 +3,9 @@ from __future__ import annotations
 from collections.abc import Iterable, Iterator
 from time import perf_counter
 
+from app.common.statuses import EVAL_STATUS_FAILED
 from app.eval.eval_types import EvalRequest, EvalResultRow, JudgeType
 from app.eval.judges.adapters.base import build_judge_adapter
-from app.eval.statuses import EVAL_STATUS_FAILED
 from app.generation.generation_types import ModelOutputRow
 from app.prompts.prompt_types import RenderedPrompt
 from app.utils.time_utils import utc_now_iso8601

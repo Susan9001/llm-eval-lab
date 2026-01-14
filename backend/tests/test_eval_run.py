@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
+from app.common.statuses import EVAL_STATUS_FAILED
 from app.eval import eval_runner
-from app.eval.statuses import EVAL_STATUS_FAILED
 
 
 class DummyAdapter:

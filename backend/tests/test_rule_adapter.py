@@ -1,13 +1,13 @@
 import pytest
 
-from app.eval.judges.adapters.rule_adapter import RuleAdapter
-from app.eval.statuses import (
+from app.common.statuses import (
   EVAL_STATUS_FAILED,
   EVAL_STATUS_SUCCEEDED,
+  GENERATION_STATUS_SUCCEEDED,
   RULE_STATUS_FAILED,
   RULE_STATUS_SUCCEEDED,
 )
-from app.generation.statuses import GENERATION_STATUS_SUCCEEDED
+from app.eval.judges.adapters.rule_adapter import RuleAdapter
 
 
 class _FakeRule:
