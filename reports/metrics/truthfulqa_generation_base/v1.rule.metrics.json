@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "generated_at": "2026-01-14T23:21:39Z",
+    "threshold": 0.5,
+    "primary_score_rule": "non_empty_output"
+  },
+  "overall": {
+    "num_total": 80,
+    "num_generation_succeeded": 80,
+    "num_generation_failed": 0,
+    "num_eval_succeeded": 80,
+    "num_eval_failed": 0,
+    "pass_rate": 1.0,
+    "avg_score": 1.0
+  },
+  "by_model_name": {
+    "mock-model": {
+      "num_total": 80,
+      "num_generation_succeeded": 80,
+      "num_generation_failed": 0,
+      "num_eval_succeeded": 80,
+      "num_eval_failed": 0,
+      "pass_rate": 1.0,
+      "avg_score": 1.0
+    }
+  },
+  "by_prompt_version": {
+    "truthfulqa_generation_base:v1": {
+      "num_total": 80,
+      "num_generation_succeeded": 80,
+      "num_generation_failed": 0,
+      "num_eval_succeeded": 80,
+      "num_eval_failed": 0,
+      "pass_rate": 1.0,
+      "avg_score": 1.0
+    }
+  },
+  "curves": {
+    "roc": {
+      "fprs": [],
+      "tprs": [],
+      "thresholds": []
+    },
+    "pr": {
+      "precisions": [],
+      "recalls": [],
+      "thresholds": []
+    }
+  }
+}

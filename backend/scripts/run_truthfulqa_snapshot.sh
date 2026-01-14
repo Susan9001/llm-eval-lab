@@ -36,3 +36,6 @@ ARGS+=("--limit" "80")
 ARGS+=("$@")
 
 python "${BUILD_SCRIPT}" "${ARGS[@]}"
+
+echo "Wrote dataset snapshot to: ${OUT_JSONL_PATH}"
+echo "Wrote snapshot meta to: ${SNAPSHOT_META_PATH}"
