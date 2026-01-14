@@ -4,6 +4,7 @@ from app.generation.generation_types import (
   GenerationResponse,
   Usage,
 )
+from app.generation.statuses import GENERATION_STATUS_SUCCEEDED
 
 
 class MockAdapter:
@@ -19,7 +20,7 @@ class MockAdapter:
     }
     return {
       "output_text": "Mock output text",
-      "generation_status": "SUCCESS",
+      "generation_status": GENERATION_STATUS_SUCCEEDED,
       "generation_error_message": None,
       "usage_json": usage,
     }

@@ -18,7 +18,7 @@ def register_adapter(provider: str, adapter: GenerationAdapter) -> None:
   ADAPTER_REGISTRY[provider] = adapter
 
 
-def get_adapter(provider: str) -> GenerationAdapter:
+def get_gen_model_adapter(provider: str) -> GenerationAdapter:
   if provider not in ADAPTER_REGISTRY:
     known = ", ".join(sorted(ADAPTER_REGISTRY.keys()))
     raise ValueError(f"Unknown provider '{provider}'. Known: {known}")

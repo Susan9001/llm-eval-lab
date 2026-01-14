@@ -19,11 +19,10 @@ PYTHONPATH=backend pip install -r backend/requirements-dev.txt
 
 CLIs to generate model outputs and run eval can be found in `docs/`.
 
-### Run tests
+## High level flow
 
-From repo root:
-
-```bash
-make test
-```
+1. `build_dataset_snapshot_cli.py` writes `data/snapshots/*.jsonl`.
+2. `render_prompts_cli.py` reads snapshots and prompt templates, writes `reports/rendered_prompts/*.jsonl`.
+3. `generate_model_outputs_cli.py` reads rendered prompts, calls a generation adapter, writes `reports/model_outputs/*.jsonl`.
+4. `run_eval_cli.py` joins rendered prompts and model outputs, applies a judge adapter, writes `reports/eval_results/*.jsonl`.
 

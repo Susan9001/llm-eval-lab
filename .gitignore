@@ -29,4 +29,4 @@ htmlcov/
 # data/raw/*
 data/snapshots/*
 
-tmp
+tmp/

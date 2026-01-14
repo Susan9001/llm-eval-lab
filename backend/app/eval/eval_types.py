@@ -1,13 +1,13 @@
-# backend/app/judges/judge_types.py
 from __future__ import annotations
 
 from typing import Literal, TypedDict
 
 from app.prompts.prompt_types import RenderedPromptIdentifier
 
-
 JudgeType = Literal["rule", "llm"]
 
+JUDGE_TYPE_RULE: JudgeType = "rule"
+JUDGE_TYPE_LLM: JudgeType = "llm"
 
 class EvalRequest(RenderedPromptIdentifier):
   """
@@ -15,7 +15,7 @@ class EvalRequest(RenderedPromptIdentifier):
 
   Built by joining:
     RenderedPrompt (input_text, reference_output, prompt identity)
-    ModelOutputRow (output_text, generation_status, provider/model identity)
+    ModelOutputRow (model_output_uuid)
   """
 
   model_output_uuid: str
@@ -38,7 +38,7 @@ class EvalRequest(RenderedPromptIdentifier):
 class RuleOutcome(TypedDict):
   """
   Output of a single rule.
-
+ 
   score:
     Prefer 0.0 to 1.0.
     Use None when SKIPPED or ERROR.

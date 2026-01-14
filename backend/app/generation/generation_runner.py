@@ -4,13 +4,14 @@ from collections.abc import Iterable, Iterator
 from time import perf_counter
 import uuid
 
-from app.generation.adapters.base import GenerationAdapter, get_adapter
+from app.generation.adapters.base import GenerationAdapter, get_gen_model_adapter
 from app.generation.generation_types import (
   GenerationRequest,
   GenerationResponse,
   ModelOutputRow,
   Usage,
 )
+from app.generation.statuses import GENERATION_STATUS_FAILED
 from app.prompts.prompt_types import RenderedPrompt
 from app.utils.time_utils import utc_now_iso8601
 
@@ -63,7 +64,7 @@ def run_one_generation(
     usage_json = resp["usage_json"]
   except Exception as e:
     output_text = None
-    generation_status = "ERROR"
+    generation_status = GENERATION_STATUS_FAILED
     generation_error_message = str(e)
     usage_json = _empty_usage()
   finally:
@@ -112,7 +113,7 @@ def iter_generation_outputs(
   Yield ModelOutputRow rows one-by-one (streaming friendly).
   If adapter is None, we resolve it from registry via get_adapter(provider).
   """
-  resolved_adapter = adapter or get_adapter(provider)
+  resolved_adapter = adapter or get_gen_model_adapter(provider)
   for rp in rendered_prompts:
     yield run_one_generation(
       resolved_adapter,

@@ -7,6 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.db import get_engine
+from app.generation.statuses import GENERATION_STATUS_SUCCEEDED
 from app.models.schema import (
   Dataset,
   Sample,
@@ -105,7 +106,7 @@ def test_smoke_db_seed_6_tables_and_rollback() -> None:
       provider="mock",
       model_name="mock-001",
       generation_params={"temperature": 0.0, "max_tokens": 16},
-      generation_status="SUCCEEDED",
+      generation_status=GENERATION_STATUS_SUCCEEDED,
       output_text="4",
       started_at=now,
       finished_at=now,

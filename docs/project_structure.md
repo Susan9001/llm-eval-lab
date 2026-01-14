@@ -26,6 +26,19 @@ llm-eval-lab/
           __init__.py                        # register adapters
           base.py                            # adapter Protocol + registry
           mock_adapter.py                    # mock provider implementation
+          eval/
+            eval_types.py                    # TypedDict contracts for evaluation, EvalRequest, EvalResultRow, RuleOutcome, status fields
+            eval_runner.py                   # Evaluation runner, joins rendered_prompts and model_outputs, runs judges, writes EvalResultRow rows
+            judges/
+              __init__.py                    # register judge adapters so build_judge_adapter can find them
+              adapters/
+                base.py                      # JudgeAdapter Protocol, adapter registry, build_judge_adapter entry point
+                rule_adapter.py              # rule-based judge adapter, runs a list of composable rules
+                llm_adapter.py               # LLM-as-judge adapter placeholder, kept for extensibility
+              rules/
+                base.py                      # Rule Protocol, rule registry, build_rules helper
+                non_empty_output.py          # rule: output_text is non-empty
+                exact_match_reference.py     # rule: output_text exactly matches reference_output
       services/                              # store-oriented services (Postgres/Redis), later phases
       utils/
         file_io.py                           # shared file helpers
@@ -37,14 +50,8 @@ llm-eval-lab/
       run_truthfulqa_snapshot.sh             # one-click: build TruthfulQA snapshot
       run_truthfulqa_rendered_prompts.sh     # one-click: render prompts v1/v2 for mini snapshot
       run_truthfulqa_model_outputs.sh        # one-click: generate model outputs from rendered prompts
+      run_truthfulqa_eval.sh                 # one-click: produce eval_results.jsonl from rendered_prompts and model_outputs
     tests/
-      test_build_dataset_snapshot_cli.py
-      test_dataset_loader.py
-      test_prompt_rendering.py
-      test_render_prompts_cli.py
-      test_generation_runner.py
-      test_smoke.py
-      test_smoke_db_seed.py
     alembic.ini
     pyproject.toml
     migrations/                              # alembic migrations (later phases)
@@ -79,9 +86,6 @@ llm-eval-lab/
 
 Project entry points. These files parse arguments and orchestrate the local workflow.
 
-- `build_dataset_snapshot_cli.py`: builds `data/snapshots/*.jsonl` from raw datasets.
-- `render_prompts_cli.py`: renders `prompts/**/*.txt` with `data/snapshots/*.jsonl` and writes `reports/rendered_prompts/**/*.jsonl`.
-
 **backend/app/datasets**
 
 Dataset ingestion and snapshot building
@@ -102,6 +106,16 @@ Model generation (separate from evaluation/judging).
 - `generation_types.py`: JSONL schemas and request/response contracts (GenerationRequest, GenerationResponse, Usage, ModelOutputRow).
 - `generation_runner.py`: helper functions that call an adapter and build ModelOutputRow rows.
 - `adapters/: provider` adapters + a registry for lookup by provider.
+
+**backend/app/eval**
+
+Evaluation and judging pipeline (separate from generation). It joins `RenderedPrompt` and `ModelOutputRow`, runs a judge, and produces `EvalResultRow` artifacts.
+
+- `eval_types.py`: JSONL schemas and shared contracts (for example `EvalRequest`, `EvalResultRow`, `RuleOutcome`, judge-type constants).
+- `eval_runner.py`: runner utilities. Builds join keys, joins rendered prompts with model outputs, calls a judge adapter, and yields `EvalResultRow` rows.
+- `judges/`: pluggable judge implementations.
+  - `adapters/`: judge adapter registry and concrete adapters. `RuleAdapter` is implemented, `LLMAdapter` is a placeholder for extensibility.
+  - `rules/`: composable rule units and a rule registry (for example `non_empty_output`, `exact_match_reference`).
 
 **backend/app/services**
 Store-oriented service layer (PostgreSQL/Redis). This is intentionally minimal early on.

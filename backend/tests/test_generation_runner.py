@@ -11,6 +11,10 @@ from app.generation.generation_types import (
   Usage,
 )
 from app.generation.adapters.base import GenerationAdapter
+from app.generation.statuses import (
+  GENERATION_STATUS_FAILED,
+  GENERATION_STATUS_SUCCEEDED,
+)
 
 
 def _make_rendered_prompt(*, source_sample_id: str = "s1") -> dict:
@@ -40,7 +44,7 @@ class FastOkAdapter:
     }
     return {
       "output_text": "ok",
-      "generation_status": "SUCCESS",
+      "generation_status": GENERATION_STATUS_SUCCEEDED,
       "generation_error_message": None,
       "usage_json": usage,
     }
@@ -63,7 +67,7 @@ def test_run_one_generation_success():
     generation_params={"temperature": 0.0},
   )
 
-  assert out["generation_status"] == "SUCCESS"
+  assert out["generation_status"] == GENERATION_STATUS_SUCCEEDED
   assert out["output_text"] == "ok"
   assert out["generation_error_message"] is None
 
@@ -95,7 +99,7 @@ def test_run_one_generation_error():
     generation_params=None,
   )
 
-  assert out["generation_status"] == "ERROR"
+  assert out["generation_status"] == GENERATION_STATUS_FAILED
   assert out["output_text"] is None
   assert out["generation_error_message"] is not None
   assert "boom" in out["generation_error_message"]
@@ -123,4 +127,4 @@ def test_run_generation_batch_len_and_order():
   )
 
   assert [o["source_sample_id"] for o in outs] == ["a", "b", "c"]
-  assert all(o["generation_status"] == "SUCCESS" for o in outs)
+  assert all(o["generation_status"] == GENERATION_STATUS_SUCCEEDED for o in outs)

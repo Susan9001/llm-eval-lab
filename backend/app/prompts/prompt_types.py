@@ -12,7 +12,6 @@ class PromptIdentifier(TypedDict):
 
   prompt_group_uid: str
   prompt_version: str
-  prompt_path: str | None
 
 
 class RenderedPromptIdentifier(PromptIdentifier, DatasetSnapshotIdentifier):
@@ -28,3 +27,4 @@ class RenderedPrompt(RenderedPromptIdentifier):
   input_text: str | None
   rendered_prompt: str
   reference_output: NotRequired[str]
+  prompt_path: str | None
