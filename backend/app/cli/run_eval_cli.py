@@ -1,5 +1,3 @@
-# backend/app/cli/run_evals_cli.py
-
 from __future__ import annotations
 
 import argparse
@@ -10,9 +8,30 @@ import jsonlines
 from app.eval.eval_runner import iter_eval_results
 from app.utils.file_io import ensure_parent_dir, iter_rows_from_jsonl
 
+rendered_prompt_required_keys = [
+  "dataset_group_uid",
+  "dataset_version",
+  "split",
+  "source_sample_id",
+  "prompt_group_uid",
+  "prompt_version",
+]
+model_output_required_keys = [
+  "dataset_group_uid",
+  "dataset_version",
+  "split",
+  "source_sample_id",
+  "prompt_group_uid",
+  "prompt_version",
+  "model_output_uuid",
+  "provider",
+  "model_name",
+  "generation_status",
+]
+
 
 @dataclass(frozen=True)
-class EvalCLIArgs:
+class EvalCliArgs:
   model_outputs_path: str
   rendered_prompts_path: str
   eval_results_path: str
@@ -21,7 +40,7 @@ class EvalCLIArgs:
   judge_model_name: str | None
 
 
-def _parse_rule_names_csv(value: str) -> list[str]:
+def _parse_rule_names(value: str) -> list[str]:
   names = [x.strip() for x in value.split(",")]
   names = [x for x in names if x]
   if not names:
@@ -31,7 +50,7 @@ def _parse_rule_names_csv(value: str) -> list[str]:
   return names
 
 
-def parse_args() -> EvalCLIArgs:
+def parse_args() -> EvalCliArgs:
   parser = argparse.ArgumentParser(
     description="Run evaluation (rule-based for now) and write eval_results.jsonl.",
   )
@@ -54,7 +73,7 @@ def parse_args() -> EvalCLIArgs:
   parser.add_argument(
     "--rule-names",
     required=True,
-    type=_parse_rule_names_csv,
+    type=_parse_rule_names,
     help="Comma-separated rule names, e.g. non_empty_output,exact_match_reference",
   )
 
@@ -75,7 +94,7 @@ def parse_args() -> EvalCLIArgs:
   if ns.judge_type != "rule":
     raise ValueError("Only --judge-type=rule is supported today.")
 
-  return EvalCLIArgs(
+  return EvalCliArgs(
     model_outputs_path=ns.model_outputs_path,
     rendered_prompts_path=ns.rendered_prompts_path,
     eval_results_path=ns.eval_results_path,
@@ -85,36 +104,10 @@ def parse_args() -> EvalCLIArgs:
   )
 
 
-def main(args: EvalCLIArgs) -> None:
-  # Keep required keys minimal to avoid tight coupling to evolving schemas.
-  # The join is based on:
-  # (dataset_group_uid, dataset_version, split, source_sample_id, prompt_group_uid, prompt_version)
-  rendered_prompt_required_keys = [
-    "dataset_group_uid",
-    "dataset_version",
-    "split",
-    "source_sample_id",
-    "prompt_group_uid",
-    "prompt_version",
-  ]
-  model_output_required_keys = [
-    "dataset_group_uid",
-    "dataset_version",
-    "split",
-    "source_sample_id",
-    "prompt_group_uid",
-    "prompt_version",
-    "model_output_uuid",
-    "provider",
-    "model_name",
-    "generation_status",
-  ]
-
-  rendered_prompts = list(
-    iter_rows_from_jsonl(
-      args.rendered_prompts_path,
-      required_keys=rendered_prompt_required_keys,
-    )
+def run_evals(args: EvalCliArgs) -> None:
+  rendered_prompts = iter_rows_from_jsonl(
+    args.rendered_prompts_path,
+    required_keys=rendered_prompt_required_keys,
   )
 
   model_output_rows = iter_rows_from_jsonl(
@@ -148,4 +141,4 @@ def main(args: EvalCLIArgs) -> None:
 
 
 if __name__ == "__main__":
-  main(parse_args())
+  run_evals(parse_args())

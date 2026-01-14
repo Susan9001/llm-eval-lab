@@ -169,8 +169,6 @@ def test_run_one_eval_overwrites_identity_and_timing_fields() -> None:
       "eval_status": "SUCCEEDED",
       "eval_error_message": None,
       "rule_outcomes": {},
-      "primary_score_rule": None,
-      "primary_score": None,
     }
   )
 

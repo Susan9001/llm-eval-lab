@@ -113,8 +113,6 @@ def build_failed_eval_result(
     eval_status=EVAL_STATUS_FAILED,
     eval_error_message=error_message,
     rule_outcomes={},
-    primary_score_rule=None,
-    primary_score=None,
     # Runner will overwrite timing fields
     started_at=utc_now_iso8601(),
     finished_at=utc_now_iso8601(),
@@ -208,6 +206,65 @@ def iter_eval_results(
     yield run_one_eval(
       adapter,
       rp,
+      mo,
+      judge_type=judge_type,
+      judge_name=judge_name,
+      judge_version=judge_version,
+    )
+
+
+def iter_eval_results_streaming(
+  rendered_prompts: Iterable[RenderedPrompt],
+  model_output_rows: Iterable[ModelOutputRow],
+  *,
+  judge_type: JudgeType,
+  judge_name: str,
+  judge_version: str | None = None,
+  judge_adapter_kwargs: dict[str, object] | None = None,
+) -> Iterator[EvalResultRow]:
+  """
+  Streaming merge join between rendered_prompts and model_output_rows.
+
+  Assumption:
+  Both streams are sorted by RenderedPromptIdKey, and model outputs for the same key are contiguous.
+  """
+  adapter = build_judge_adapter(judge_type, **(judge_adapter_kwargs or {}))
+
+  rendered_prompt_iter = iter(rendered_prompts)
+  current_rp = next(rendered_prompt_iter, None)
+  if current_rp is None:
+    return
+
+  current_key = make_rendered_prompt_key(current_rp)
+  last_rp_key = current_key
+
+  for mo in model_output_rows:
+    mo_key = make_rendered_prompt_key(mo)
+
+    while current_rp is not None and current_key < mo_key:
+      current_rp = next(rendered_prompt_iter, None)
+      if current_rp is None:
+        break
+      current_key = make_rendered_prompt_key(current_rp)
+
+      if current_key < last_rp_key:
+        raise ValueError(
+          "rendered_prompts is not sorted by key. "
+          f"last_key={last_rp_key}, current_key={current_key}"
+        )
+      last_rp_key = current_key
+
+    if current_rp is None or current_key != mo_key:
+      raise ValueError(
+        "Missing rendered prompt for model output row, or inputs are not aligned/sorted. "
+        f"model_output_uuid={mo.get('model_output_uuid')}, "
+        f"rendered_prompt_key={mo_key}, "
+        f"current_rendered_prompt_key={current_key if current_rp is not None else None}"
+      )
+
+    yield run_one_eval(
+      adapter,
+      current_rp,
       mo,
       judge_type=judge_type,
       judge_name=judge_name,

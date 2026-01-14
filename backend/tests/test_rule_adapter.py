@@ -46,11 +46,6 @@ def test_init_rule_names_empty_raises():
     RuleAdapter(rule_names=[])
 
 
-def test_init_primary_score_rule_not_in_rule_names_raises():
-  with pytest.raises(ValueError, match="must be included in rule_names"):
-    RuleAdapter(rule_names=["a"], primary_score_rule="b")
-
-
 def test_evaluate_generation_not_succeeded_marks_eval_failed(monkeypatch):
   monkeypatch.setattr(
     "app.eval.judges.adapters.rule_adapter.build_rules",
@@ -74,7 +69,6 @@ def test_evaluate_generation_not_succeeded_marks_eval_failed(monkeypatch):
 
   assert res["eval_status"] == EVAL_STATUS_FAILED
   assert res["rule_outcomes"] == {}
-  assert res["primary_score"] is None
   assert res["eval_error_message"] is not None
   assert "generation_status=" in res["eval_error_message"]
 
@@ -96,7 +90,7 @@ def test_evaluate_all_rules_succeeded_eval_succeeded(monkeypatch):
     lambda rule_names: rules,
   )
 
-  adapter = RuleAdapter(rule_names=["r_ok"], primary_score_rule="r_ok")
+  adapter = RuleAdapter(rule_names=["r_ok"])
   req = _make_req(generation_status=GENERATION_STATUS_SUCCEEDED)
 
   res = adapter.evaluate(req)
@@ -105,8 +99,6 @@ def test_evaluate_all_rules_succeeded_eval_succeeded(monkeypatch):
   assert res["eval_error_message"] is None
   assert "r_ok" in res["rule_outcomes"]
   assert res["rule_outcomes"]["r_ok"]["status"] == RULE_STATUS_SUCCEEDED
-  assert res["primary_score_rule"] == "r_ok"
-  assert res["primary_score"] == 1.0
 
 
 def test_evaluate_one_rule_throws_marks_rule_failed_and_eval_failed(
@@ -132,9 +124,7 @@ def test_evaluate_one_rule_throws_marks_rule_failed_and_eval_failed(
     lambda rule_names: rules,
   )
 
-  adapter = RuleAdapter(
-    rule_names=["r_ok", "r_boom"], primary_score_rule="r_ok"
-  )
+  adapter = RuleAdapter(rule_names=["r_ok", "r_boom"])
   req = _make_req(generation_status=GENERATION_STATUS_SUCCEEDED)
 
   res = adapter.evaluate(req)
@@ -147,33 +137,3 @@ def test_evaluate_one_rule_throws_marks_rule_failed_and_eval_failed(
   assert "RuntimeError" in (
     res["rule_outcomes"]["r_boom"]["error_message"] or ""
   )
-
-  # primary_score_rule 成功时仍然能取到分数。
-  assert res["primary_score"] == 1.0
-
-
-def test_primary_score_rule_none_means_no_primary_score(monkeypatch):
-  rules = [
-    _FakeRule(
-      "r_ok",
-      lambda req: {
-        "status": RULE_STATUS_SUCCEEDED,
-        "score": 0.3,
-        "rationale": None,
-        "error_message": None,
-      },
-    )
-  ]
-  monkeypatch.setattr(
-    "app.eval.judges.adapters.rule_adapter.build_rules",
-    lambda rule_names: rules,
-  )
-
-  adapter = RuleAdapter(rule_names=["r_ok"], primary_score_rule=None)
-  req = _make_req(generation_status=GENERATION_STATUS_SUCCEEDED)
-
-  res = adapter.evaluate(req)
-
-  assert res["eval_status"] == EVAL_STATUS_SUCCEEDED
-  assert res["primary_score_rule"] is None
-  assert res["primary_score"] is None

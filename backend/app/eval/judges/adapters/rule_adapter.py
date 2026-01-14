@@ -11,7 +11,6 @@ from app.eval.statuses import (
   EVAL_STATUS_FAILED,
   EVAL_STATUS_SUCCEEDED,
   RULE_STATUS_FAILED,
-  RULE_STATUS_SUCCEEDED,
 )
 from app.generation.statuses import GENERATION_STATUS_SUCCEEDED
 
@@ -25,20 +24,13 @@ class RuleAdapter:
     self,
     *,
     rule_names: list[str],
-    primary_score_rule: str | None = None,
     judge_name: str = "rule_judge",
     judge_version: str | None = None,
   ) -> None:
     if not rule_names:
       raise ValueError("rule_names must be a non-empty list.")
 
-    if primary_score_rule is not None and primary_score_rule not in rule_names:
-      raise ValueError(
-        f"primary_score_rule '{primary_score_rule}' must be included in rule_names: {rule_names}"
-      )
-
     self._rule_names = rule_names
-    self._primary_score_rule = primary_score_rule
     self._judge_name = judge_name
     self._judge_version = judge_version
 
@@ -46,8 +38,6 @@ class RuleAdapter:
     eval_status: str
     eval_error_message: str | None = None
     rule_outcomes: dict[str, RuleOutcome] = {}
-    primary_score_rule: str | None = self._primary_score_rule
-    primary_score: float | None = None
 
     try:
       generation_status = req["generation_status"]
@@ -70,14 +60,6 @@ class RuleAdapter:
               rationale=None,
               error_message=f"{type(e).__name__}: {e}",
             )
-
-        if primary_score_rule is not None:
-          outcome = rule_outcomes.get(primary_score_rule)
-          if (
-            outcome is not None
-            and outcome.get("status") == RULE_STATUS_SUCCEEDED
-          ):
-            primary_score = outcome.get("score")
 
         if any(
           outcome.get("status") == RULE_STATUS_FAILED
@@ -115,7 +97,5 @@ class RuleAdapter:
       eval_error_message=eval_error_message,
       # Rule results
       rule_outcomes=rule_outcomes,
-      primary_score_rule=primary_score_rule,
-      primary_score=primary_score,
     )
     return res

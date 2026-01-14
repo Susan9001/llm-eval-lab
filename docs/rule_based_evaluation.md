@@ -77,7 +77,6 @@ At a high level, each row contains:
 - Judge metadata: `judge_type`, `judge_name`, `judge_version` (optional)
 - Status: `eval_status`, `eval_error_message`
 - Rule details: `rule_outcomes` as a mapping `{rule_name: RuleOutcome}`
-- Convenience fields: `primary_score_rule`, `primary_score`
 - Timing: `started_at`, `finished_at`, `latency_ms`
 
 `RuleOutcome` is intentionally small and composable:

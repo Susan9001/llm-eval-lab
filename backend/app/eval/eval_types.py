@@ -71,10 +71,6 @@ class EvalResultRow(RenderedPromptIdentifier):
   # rule_name -> outcome
   rule_outcomes: dict[str, RuleOutcome]
 
-  # Convenience fields for aggregation and thresholding.
-  primary_score_rule: str | None
-  primary_score: float | None
-
   started_at: str
   finished_at: str
   latency_ms: int | None
