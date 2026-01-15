@@ -34,6 +34,7 @@ class DatasetSnapshotIdentifier(TypedDict):
   dataset_version: str
   split: str
 
+
 class DatasetSnapshotMeta(DatasetSnapshotIdentifier):
   """
   This is the single source of truth for snapshot provenance and how the
