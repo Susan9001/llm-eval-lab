@@ -25,8 +25,9 @@ class BucketAccumulator:
 
   num_eval_succeeded: int = 0
   num_eval_failed: int = 0
+  num_primary_scored: int = 0
 
-  num_pass: int = 0
+  num_positive: int = 0  # tp + fp
   sum_score: float = 0.0
 
   def add(self, row: EvalResultRow, config: MetricsBuildConfig) -> None:
@@ -49,21 +50,23 @@ class BucketAccumulator:
       if isinstance(raw_score, (int, float)):
         primary_score = float(raw_score)
 
-    if eval_status == EVAL_STATUS_SUCCEEDED and primary_score is not None:
+    if eval_status == EVAL_STATUS_SUCCEEDED:
       self.num_eval_succeeded += 1
-      self.sum_score += primary_score
-      if primary_score >= config.threshold:
-        self.num_pass += 1
+      if primary_score is not None:
+        self.num_primary_scored += 1
+        self.sum_score += primary_score
+        if primary_score >= config.threshold:
+          self.num_positive += 1
     else:
       self.num_eval_failed += 1
 
   def get_metrics(self) -> BucketMetrics:
-    pass_rate = 0.0
+    positive_rate = 0.0
     avg_score: float | None = None
 
-    if self.num_eval_succeeded > 0:
-      pass_rate = self.num_pass / self.num_eval_succeeded
-      avg_score = self.sum_score / self.num_eval_succeeded
+    if self.num_primary_scored > 0:
+      positive_rate = self.num_positive / self.num_primary_scored
+      avg_score = self.sum_score / self.num_primary_scored
 
     return BucketMetrics(
       num_total=self.num_total,
@@ -71,6 +74,7 @@ class BucketAccumulator:
       num_generation_failed=self.num_generation_failed,
       num_eval_succeeded=self.num_eval_succeeded,
       num_eval_failed=self.num_eval_failed,
-      pass_rate=pass_rate,
+      num_primary_scored=self.num_primary_scored,
+      positive_rate=positive_rate,
       avg_score=avg_score,
     )

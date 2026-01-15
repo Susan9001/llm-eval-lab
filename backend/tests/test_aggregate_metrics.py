@@ -91,7 +91,8 @@ def test_build_metrics_single_row():
   # Overall
   assert result["overall"]["num_total"] == 1
   assert result["overall"]["num_eval_succeeded"] == 1
-  assert result["overall"]["pass_rate"] == 1.0
+  assert result["overall"]["num_primary_scored"] == 1
+  assert result["overall"]["positive_rate"] == 1.0
   assert result["overall"]["avg_score"] == 0.8
 
   # By model name
@@ -130,7 +131,7 @@ def test_build_metrics_multiple_rows_different_models():
 
   # Overall: 3 rows, 2 passed (0.7 and 0.9)
   assert result["overall"]["num_total"] == 3
-  assert result["overall"]["pass_rate"] == 2 / 3
+  assert result["overall"]["positive_rate"] == 2 / 3
 
   # By model name
   assert len(result["by_model_name"]) == 2
@@ -147,15 +148,18 @@ def test_build_metrics_with_failed_rows():
   config = make_config()
   rows = [
     make_row(rule_outcomes={"rule1": make_rule_outcome(0.8)}),
-    make_row(generation_status="FAILED"),
+    make_row(generation_status="FAILED", eval_status="FAILED"),
     make_row(rule_outcomes={}),
   ]
 
   result = build_metrics(rows, config)
 
-  # Overall: 3 total, 1 eval succeeded
+  # Overall: 3 total, 2 eval succeeded (row 1 has score, row 3 has SUCCEEDED status but no score)
   assert result["overall"]["num_total"] == 3
   assert result["overall"]["num_generation_succeeded"] == 2
   assert result["overall"]["num_generation_failed"] == 1
-  assert result["overall"]["num_eval_succeeded"] == 1
-  assert result["overall"]["num_eval_failed"] == 2
+  assert result["overall"]["num_eval_succeeded"] == 2  # Row 1 and row 3
+  assert result["overall"]["num_eval_failed"] == 1  # Row 2 (generation failed)
+  assert (
+    result["overall"]["num_primary_scored"] == 1
+  )  # Only row 1 has valid score

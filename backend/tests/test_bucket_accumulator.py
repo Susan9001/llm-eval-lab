@@ -72,7 +72,8 @@ def test_empty_accumulator():
   assert metrics["num_generation_failed"] == 0
   assert metrics["num_eval_succeeded"] == 0
   assert metrics["num_eval_failed"] == 0
-  assert metrics["pass_rate"] == 0.0
+  assert metrics["num_primary_scored"] == 0
+  assert metrics["positive_rate"] == 0.0
   assert metrics["avg_score"] is None
 
 
@@ -90,11 +91,12 @@ def test_single_row_eval_succeeded_pass():
   assert acc.num_generation_failed == 0
   assert acc.num_eval_succeeded == 1
   assert acc.num_eval_failed == 0
-  assert acc.num_pass == 1
+  assert acc.num_primary_scored == 1
+  assert acc.num_positive == 1
   assert acc.sum_score == 0.8
 
   metrics = acc.get_metrics()
-  assert metrics["pass_rate"] == 1.0
+  assert metrics["positive_rate"] == 1.0
   assert metrics["avg_score"] == 0.8
 
 
@@ -111,11 +113,12 @@ def test_single_row_eval_succeeded_no_pass():
   assert acc.num_generation_succeeded == 1
   assert acc.num_eval_succeeded == 1
   assert acc.num_eval_failed == 0
-  assert acc.num_pass == 0
+  assert acc.num_primary_scored == 1
+  assert acc.num_positive == 0
   assert acc.sum_score == 0.3
 
   metrics = acc.get_metrics()
-  assert metrics["pass_rate"] == 0.0
+  assert metrics["positive_rate"] == 0.0
   assert metrics["avg_score"] == 0.3
 
 
@@ -123,7 +126,10 @@ def test_single_row_generation_failed():
   config = make_config()
   acc = BucketAccumulator()
 
-  row = make_row(generation_status=GENERATION_STATUS_FAILED)
+  row = make_row(
+    generation_status=GENERATION_STATUS_FAILED,
+    eval_status="FAILED",  # When generation fails, eval also fails
+  )
   acc.add(row, config)
 
   assert acc.num_total == 1
@@ -131,6 +137,7 @@ def test_single_row_generation_failed():
   assert acc.num_generation_failed == 1
   assert acc.num_eval_succeeded == 0
   assert acc.num_eval_failed == 1
+  assert acc.num_primary_scored == 0
 
 
 def test_single_row_eval_failed_no_primary_score():
@@ -143,8 +150,9 @@ def test_single_row_eval_failed_no_primary_score():
   assert acc.num_total == 1
   assert acc.num_generation_succeeded == 1
   assert acc.num_generation_failed == 0
-  assert acc.num_eval_succeeded == 0
-  assert acc.num_eval_failed == 1
+  assert acc.num_eval_succeeded == 1  # eval_status is SUCCEEDED
+  assert acc.num_eval_failed == 0
+  assert acc.num_primary_scored == 0  # but no primary_score
 
 
 def test_single_row_empty_rule_outcomes():
@@ -154,8 +162,9 @@ def test_single_row_empty_rule_outcomes():
   row = make_row(rule_outcomes=None)
   acc.add(row, config)
 
-  assert acc.num_eval_succeeded == 0
-  assert acc.num_eval_failed == 1
+  assert acc.num_eval_succeeded == 1  # eval_status is SUCCEEDED
+  assert acc.num_eval_failed == 0
+  assert acc.num_primary_scored == 0  # but no primary_score
 
 
 def test_single_row_primary_score_rule_not_exist():
@@ -165,8 +174,9 @@ def test_single_row_primary_score_rule_not_exist():
   row = make_row(rule_outcomes={"rule2": make_rule_outcome(0.8)})
   acc.add(row, config)
 
-  assert acc.num_eval_succeeded == 0
-  assert acc.num_eval_failed == 1
+  assert acc.num_eval_succeeded == 1  # eval_status is SUCCEEDED
+  assert acc.num_eval_failed == 0
+  assert acc.num_primary_scored == 0  # but primary_score_rule doesn't exist
 
 
 def test_single_row_score_equals_threshold_passes():
@@ -176,8 +186,9 @@ def test_single_row_score_equals_threshold_passes():
   row = make_row(rule_outcomes={"rule1": make_rule_outcome(0.5)})
   acc.add(row, config)
 
-  assert acc.num_pass == 1
+  assert acc.num_positive == 1
   assert acc.num_eval_succeeded == 1
+  assert acc.num_primary_scored == 1
 
 
 def test_multiple_rows_mixed():
@@ -190,21 +201,28 @@ def test_multiple_rows_mixed():
   acc.add(make_row(rule_outcomes={"rule1": make_rule_outcome(0.3)}), config)
   # No pass: 0.5 == 0.5 (edge case, passes)
   acc.add(make_row(rule_outcomes={"rule1": make_rule_outcome(0.5)}), config)
-  # Generation failed
-  acc.add(make_row(generation_status=GENERATION_STATUS_FAILED), config)
-  # Eval failed (no score)
+  # Generation failed (eval_status = FAILED)
+  acc.add(
+    make_row(
+      generation_status=GENERATION_STATUS_FAILED,
+      eval_status="FAILED",
+    ),
+    config,
+  )
+  # Eval succeeded but no primary_score (empty rule_outcomes)
   acc.add(make_row(rule_outcomes={}), config)
 
   assert acc.num_total == 5
   assert acc.num_generation_succeeded == 4
   assert acc.num_generation_failed == 1
-  assert acc.num_eval_succeeded == 3
-  assert acc.num_eval_failed == 2
-  assert acc.num_pass == 2  # 0.8 and 0.5
+  assert acc.num_eval_succeeded == 4  # All except generation failed
+  assert acc.num_eval_failed == 1  # Only generation failed
+  assert acc.num_primary_scored == 3  # Only rows with valid scores
+  assert acc.num_positive == 2  # 0.8 and 0.5
   assert acc.sum_score == pytest.approx(1.6)  # 0.8 + 0.3 + 0.5
 
   metrics = acc.get_metrics()
-  assert metrics["pass_rate"] == pytest.approx(2 / 3)
+  assert metrics["positive_rate"] == pytest.approx(2 / 3)
   assert metrics["avg_score"] == pytest.approx(1.6 / 3)
 
 
@@ -212,12 +230,22 @@ def test_get_metrics_with_zero_eval_succeeded():
   config = make_config()
   acc = BucketAccumulator()
 
-  # Add only failed rows
-  acc.add(make_row(rule_outcomes={}), config)
-  acc.add(make_row(generation_status=GENERATION_STATUS_FAILED), config)
+  # Add only failed rows - use eval_status="FAILED" to ensure eval doesn't succeed
+  acc.add(
+    make_row(rule_outcomes={}, eval_status="FAILED"),
+    config,
+  )
+  acc.add(
+    make_row(
+      generation_status=GENERATION_STATUS_FAILED,
+      eval_status="FAILED",
+    ),
+    config,
+  )
 
   metrics = acc.get_metrics()
   assert metrics["num_total"] == 2
-  assert metrics["num_eval_succeeded"] == 0
-  assert metrics["pass_rate"] == 0.0
+  assert metrics["num_eval_succeeded"] == 0  # No eval succeeded
+  assert metrics["num_primary_scored"] == 0  # No primary scores
+  assert metrics["positive_rate"] == 0.0
   assert metrics["avg_score"] is None

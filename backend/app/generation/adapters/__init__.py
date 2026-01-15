@@ -3,4 +3,4 @@ from app.generation.adapters.harmful_score_adapter import HarmfulScoreAdapter
 from app.generation.adapters.mock_adapter import MockAdapter
 
 register_adapter("mock", MockAdapter())
-register_adapter("harmful_score", HarmfulScoreAdapter())
+register_adapter("mock_harmful_score", HarmfulScoreAdapter())

@@ -22,8 +22,7 @@ EVAL_RESULTS_JSONL="${OUT_DIR}/v1.rule.jsonl"
 
 # Comma-separated rule names.
 # Note: exact_match_reference is not used for agnews_harmful since there's no reference_output.
-RULE_NAMES="non_empty_output,harmful_label_match"
-PRIMARY_SCORE_RULE="harmful_label_match"
+RULE_NAMES="harmful_label_match,harmful_score"
 
 # Today: only "rule" is expected to work. Keep "llm" for future extensibility.
 JUDGE_TYPE="rule"

@@ -143,10 +143,15 @@ def test_aggregate_metrics_cli_end_to_end(tmp_path) -> None:
   assert overall["num_total"] == 4
   assert overall["num_generation_succeeded"] == 3
   assert overall["num_generation_failed"] == 1
-  assert overall["num_eval_succeeded"] == 3
-  assert overall["num_eval_failed"] == 1
+  assert (
+    overall["num_eval_succeeded"] == 3
+  )  # All 3 rows with SUCCEEDED eval status
+  assert overall["num_eval_failed"] == 1  # The generation failed row
+  assert (
+    overall["num_primary_scored"] == 3
+  )  # All 3 succeeded rows have valid scores
 
-  assert overall["pass_rate"] == pytest.approx(2 / 3, rel=1e-9)
+  assert overall["positive_rate"] == pytest.approx(2 / 3, rel=1e-9)
   assert overall["avg_score"] == pytest.approx((1.0 + 0.5 + 0.2) / 3, rel=1e-9)
 
   assert "by_model_name" in metrics

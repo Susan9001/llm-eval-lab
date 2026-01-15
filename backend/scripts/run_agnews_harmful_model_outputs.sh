@@ -26,8 +26,8 @@ export PYTHONPATH="${BACKEND_DIR}"
 ARGS=(
   "--rendered-prompts-jsonl-path" "${RENDERED_PROMPTS_JSONL_PATH}"
   "--out-jsonl-path" "${OUT_JSONL_PATH}"
-  "--provider" "mock"
-  "--model-name" "harmful_score"
+  "--provider" "mock_harmful_score"
+  "--model-name" "harmful_score_mock_model"
   "--generation-params-json" "${GENERATION_PARAMS_JSON}"
 )
 

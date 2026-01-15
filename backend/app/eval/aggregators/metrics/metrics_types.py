@@ -21,8 +21,9 @@ class BucketMetrics(TypedDict):
 
   num_eval_succeeded: int
   num_eval_failed: int
+  num_primary_scored: int
 
-  pass_rate: float
+  positive_rate: float
   avg_score: float | None
 
 
@@ -35,7 +36,6 @@ class CurvesMetrics(TypedDict):
   Expected keys:
   - roc: fprs, tprs, thresholds
   - pr: precisions, recalls, thresholds
-  - f1.
   """
 
   roc: dict[str, list[float]]

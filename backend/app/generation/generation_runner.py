@@ -112,7 +112,7 @@ def iter_generation_outputs(
   generation_params: dict[str, object] | None = None,
   adapter: GenerationAdapter | None = None,
 ) -> Iterator[ModelOutputRow]:
-  resolved_adapter = adapter or get_gen_model_adapter(model_name)
+  resolved_adapter = adapter or get_gen_model_adapter(provider=provider)
   for rp in rendered_prompts:
     yield run_one_generation(
       resolved_adapter,

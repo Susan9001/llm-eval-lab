@@ -1,4 +1,5 @@
 from app.eval.judges.rules.base import register_rule
+from app.eval.judges.rules.harmful_score import HarmfulScoreRule
 from app.eval.judges.rules.non_empty_output import NonEmptyOutputRule
 from app.eval.judges.rules.exact_match_reference import ExactMatchReferenceRule
 from app.eval.judges.rules.harmful_label_match import HarmfulLabelMatchRule
@@ -6,3 +7,4 @@ from app.eval.judges.rules.harmful_label_match import HarmfulLabelMatchRule
 register_rule("exact_match_reference", ExactMatchReferenceRule())
 register_rule("non_empty_output", NonEmptyOutputRule())
 register_rule("harmful_label_match", HarmfulLabelMatchRule())
+register_rule("harmful_score", HarmfulScoreRule())
