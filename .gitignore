@@ -27,7 +27,8 @@ htmlcov/
 *.env
 
 # data/raw/*
-data/snapshots/*
 data/*
+!data/snapshots/
+!data/snapshots/*
 
 tmp/

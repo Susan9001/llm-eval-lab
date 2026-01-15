@@ -1,0 +1,16 @@
+{
+  "adapter_name": "truthfulqa",
+  "created_at": "2026-01-15T03:34:20Z",
+  "dataset_display_name": "TruthfulQA",
+  "dataset_group_uid": "truthfulqa",
+  "dataset_version": "2026-01-14_limit80_head",
+  "file_format": "csv",
+  "input_path": "/mnt/c/Users/qkuan/Documents/llm-eval-lab/data/TruthfulQA.csv",
+  "num_samples": 80,
+  "sampling": {
+    "limit": 80,
+    "seed": null,
+    "should_random_sample": false
+  },
+  "split": "test"
+}
