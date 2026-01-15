@@ -35,6 +35,7 @@ class CurvesMetrics(TypedDict):
   Expected keys:
   - roc: fprs, tprs, thresholds
   - pr: precisions, recalls, thresholds
+  - f1.
   """
 
   roc: dict[str, list[float]]

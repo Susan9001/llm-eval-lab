@@ -22,27 +22,6 @@ class SamplingMeta(TypedDict):
   seed: int | None
 
 
-class DatasetSnapshotMeta(TypedDict):
-  """
-  This is the single source of truth for snapshot provenance and how the
-  snapshot was created.
-  """
-
-  dataset_group_uid: str
-  adapter_name: str
-  dataset_display_name: str | None
-  dataset_version: str
-
-  input_path: str
-  file_format: str
-  num_samples: int
-
-  split: str
-  sampling: SamplingMeta
-
-  created_at: str  # ISO-8601 UTC timestamp (e.g. "2026-01-12T17:15:38Z")
-
-
 class DatasetSnapshotIdentifier(TypedDict):
   """
   Minimal, stable dataset identity fields that downstream artifacts should carry.
@@ -55,6 +34,23 @@ class DatasetSnapshotIdentifier(TypedDict):
   dataset_version: str
   split: str
 
+class DatasetSnapshotMeta(DatasetSnapshotIdentifier):
+  """
+  This is the single source of truth for snapshot provenance and how the
+  snapshot was created.
+  """
+
+  adapter_name: str
+  dataset_display_name: str | None
+
+  input_path: str
+  file_format: str
+  num_samples: int
+
+  sampling: SamplingMeta
+
+  created_at: str  # ISO-8601 UTC timestamp (e.g. "2026-01-12T17:15:38Z")
+
 
 def extract_dataset_snapshot_identifier(
   meta: DatasetSnapshotMeta,
@@ -62,9 +58,8 @@ def extract_dataset_snapshot_identifier(
   """
   Extract minimal dataset identity info from full snapshot metadata.
   """
-  identifier: DatasetSnapshotIdentifier = DatasetSnapshotIdentifier(
+  return DatasetSnapshotIdentifier(
     dataset_group_uid=meta["dataset_group_uid"],
     dataset_version=meta["dataset_version"],
     split=meta["split"],
   )
-  return identifier
