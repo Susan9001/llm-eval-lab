@@ -28,5 +28,6 @@ htmlcov/
 
 # data/raw/*
 data/snapshots/*
+data/*
 
 tmp/
