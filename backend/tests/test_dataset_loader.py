@@ -73,15 +73,18 @@ def test_load_sample_records_jsonl_with_monkeypatched_adapter(
 
   import app.datasets.dataset_loader as dataset_loader
 
-  def adapter(row: dict, row_index: int) -> dict:
-    return {
-      "source_sample_id": f"id_{row_index}",
-      "input_text": str(row.get("x")),
-      "reference_output": None,
-      "metadata": {"x": row.get("x")},
-    }
+  class MockAdapter:
+    def adapt(self, row: dict, row_index: int) -> dict:
+      return {
+        "source_sample_id": f"id_{row_index}",
+        "input_text": str(row.get("x")),
+        "reference_output": None,
+        "metadata": {"x": row.get("x")},
+      }
 
-  monkeypatch.setattr(dataset_loader, "get_adapter", lambda _: adapter)
+  monkeypatch.setattr(
+    dataset_loader, "build_dataset_adapter", lambda _: MockAdapter()
+  )
 
   sample_records = load_sample_records(
     input_path=str(jsonl_path),

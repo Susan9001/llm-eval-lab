@@ -1,4 +1,3 @@
-from collections.abc import Callable
 from typing import Any, TypedDict
 
 
@@ -6,12 +5,13 @@ class SampleRecord(TypedDict, total=False):
   source_sample_id: str
   input_text: str
   reference_output: str | None
+  # Optional, for supervised eval or curves. value should be 0 or 1 only.
+  # Example: {"harmful": 0} or {"harmful": 1}
+  labels: dict[str, int] | None
   metadata: dict[str, Any] | None
 
 
 RawRow = dict[str, Any]
-
-AdapterFn = Callable[[RawRow, int], SampleRecord]
 
 
 class SamplingMeta(TypedDict):

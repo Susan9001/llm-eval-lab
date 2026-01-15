@@ -2,8 +2,8 @@ from typing import TypeVar
 from collections.abc import Iterable
 import random
 
-from app.datasets.dataset_types import SampleRecord, AdapterFn, RawRow
-from app.datasets.adapters.truthfulqa import adapt_truthfulqa_row
+from app.datasets.dataset_types import SampleRecord, RawRow
+from app.datasets.adapters.base import build_dataset_adapter
 from app.utils.file_io import iter_rows_from_jsonl, iter_rows_from_csv
 
 
@@ -30,19 +30,11 @@ def load_sample_records(
   idx_rows = list(enumerate(rows, start=1))
   idx_rows = apply_sampling(idx_rows, should_random_sample, limit, seed)
 
+  adapter = build_dataset_adapter(adapter_name)
   records = []
-  adapter = get_adapter(adapter_name)
   for idx, row in idx_rows:
-    records.append(adapter(row, idx))
+    records.append(adapter.adapt(row, idx))
   return records
-
-
-def get_adapter(adapter_name: str) -> AdapterFn:
-  """Return an adapter function based on adapter_name, e.g., truthfulqa."""
-  adapter_name = adapter_name.lower().strip()
-  if adapter_name == "truthfulqa":
-    return adapt_truthfulqa_row
-  raise ValueError(f"No adapter for {adapter_name}.")
 
 
 def apply_sampling(
