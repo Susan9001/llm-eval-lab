@@ -112,11 +112,7 @@ def iter_generation_outputs(
   generation_params: dict[str, object] | None = None,
   adapter: GenerationAdapter | None = None,
 ) -> Iterator[ModelOutputRow]:
-  """
-  Yield ModelOutputRow rows one-by-one (streaming friendly).
-  If adapter is None, we resolve it from registry via get_adapter(provider).
-  """
-  resolved_adapter = adapter or get_gen_model_adapter(provider)
+  resolved_adapter = adapter or get_gen_model_adapter(model_name)
   for rp in rendered_prompts:
     yield run_one_generation(
       resolved_adapter,

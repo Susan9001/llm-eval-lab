@@ -1,4 +1,3 @@
-# backend/app/generation/adapters/base.py
 from typing import Protocol
 
 from app.generation.generation_types import (

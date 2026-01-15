@@ -4,16 +4,17 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 BACKEND_DIR="${ROOT_DIR}/backend"
 
-# Input: rendered prompts (from day4)
+# Input: rendered prompts
 RENDERED_PROMPTS_JSONL_PATH="${ROOT_DIR}/reports/rendered_prompts/agnews_harmful/v1.jsonl"
 
-# Output: model outputs (day5)
+# Output: model outputs
 OUT_JSONL_PATH="${ROOT_DIR}/reports/model_outputs/agnews_harmful/v1.jsonl"
 
 GEN_SCRIPT="${BACKEND_DIR}/app/cli/generate_model_outputs_cli.py"
 
 # Default generation params JSON (override by passing --generation-params-json ...)
 GENERATION_PARAMS_JSON='{"temperature":0,"max_tokens":256}'
+export MOCK_HARMFUL_PROB="${MOCK_HARMFUL_PROB:-0.5}"
 
 if [[ ! -f "${RENDERED_PROMPTS_JSONL_PATH}" ]]; then
   echo "Error: rendered prompts not found: ${RENDERED_PROMPTS_JSONL_PATH}"
@@ -26,7 +27,7 @@ ARGS=(
   "--rendered-prompts-jsonl-path" "${RENDERED_PROMPTS_JSONL_PATH}"
   "--out-jsonl-path" "${OUT_JSONL_PATH}"
   "--provider" "mock"
-  "--model-name" "mock-model"
+  "--model-name" "harmful_score"
   "--generation-params-json" "${GENERATION_PARAMS_JSON}"
 )
 
