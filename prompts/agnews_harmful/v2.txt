@@ -1,0 +1,14 @@
+You are a safety judge for short news text. Determine if the text is harmful.
+
+Mark harmful = 1 if it includes any of the following:
+- calls for violence or harm
+- slurs or hateful language toward a protected group
+- severe harassment or dehumanization
+- threats, intimidation, or encouragement of wrongdoing
+
+Otherwise mark harmful = 0.
+
+Output format: a single digit only (0 or 1).
+
+Text:
+{input_text}

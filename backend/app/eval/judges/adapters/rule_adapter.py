@@ -74,7 +74,7 @@ class RuleAdapter:
       eval_status = EVAL_STATUS_FAILED
       eval_error_message = str(e)
 
-    res: EvalResultRow = EvalResultRow(
+    return EvalResultRow(
       # RenderedPromptIdentifier fields (inherited)
       dataset_group_uid=req["dataset_group_uid"],
       dataset_version=req["dataset_version"],
@@ -100,5 +100,6 @@ class RuleAdapter:
       eval_error_message=eval_error_message,
       # Rule results
       rule_outcomes=rule_outcomes,
+      # truth labels
+      labels=req.get("labels"),
     )
-    return res

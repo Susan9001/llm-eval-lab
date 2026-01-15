@@ -82,6 +82,8 @@ def build_eval_request(rp: RenderedPrompt, mo: ModelOutputRow) -> EvalRequest:
     output_text=mo.get("output_text"),
     # For LLM-as-judge only (kept for extensibility)
     rendered_eval_prompt=None,
+    # 0/1 labels for supervised eval or curves
+    labels=rp.get("labels"),
   )
 
 
@@ -163,6 +165,7 @@ def run_one_eval(
   res["prompt_group_uid"] = req["prompt_group_uid"]
   res["prompt_version"] = req["prompt_version"]
   res["prompt_path"] = req.get("prompt_path")
+  res["labels"] = req.get("labels")
 
   res["model_output_uuid"] = req["model_output_uuid"]
   res["provider"] = req["provider"]

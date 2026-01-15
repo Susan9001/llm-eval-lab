@@ -28,3 +28,7 @@ class RenderedPrompt(RenderedPromptIdentifier):
   rendered_prompt: str
   reference_output: NotRequired[str]
   prompt_path: str | None
+
+  # Optional, for supervised eval or curves. value should be 0 or 1 only.
+  # Example: {"harmful": 0} or {"harmful": 1}
+  labels: NotRequired[dict[str, int]]

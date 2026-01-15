@@ -3,6 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 import re
 
+from app.datasets.dataset_types import DatasetSnapshotIdentifier, SampleRecord
+from app.prompts.prompt_types import RenderedPrompt
+
 
 _GROUP_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 
@@ -86,3 +89,51 @@ def render_prompt(
     rendered = rendered.replace("{output_text}", output_text)
 
   return rendered
+
+
+def render_one_prompt(
+  template_text: str,
+  prompt_group_uid: str,
+  prompt_version: str,
+  dataset_identifier: DatasetSnapshotIdentifier,
+  sample_record: SampleRecord,
+  *,
+  prompt_path: str | None,
+  output_text: str | None = None,
+) -> RenderedPrompt:
+  """
+  Render a single prompt for one sample record.
+
+  Returns:
+    RenderedPrompt dict
+  """
+  input_text = sample_record["input_text"]
+  reference_output = sample_record.get("reference_output")
+  labels = sample_record.get("labels")
+
+  rendered_prompt = render_prompt(
+    template_text,
+    input_text=input_text,
+    reference_output=reference_output,
+    output_text=output_text,
+  )
+
+  out_row: RenderedPrompt = {
+    "dataset_group_uid": dataset_identifier["dataset_group_uid"],
+    "dataset_version": dataset_identifier["dataset_version"],
+    "split": dataset_identifier["split"],
+    "prompt_group_uid": prompt_group_uid,
+    "prompt_version": prompt_version,
+    "source_sample_id": sample_record["source_sample_id"],
+    "input_text": input_text,
+    "rendered_prompt": rendered_prompt,
+    "reference_output": reference_output,
+  }
+  if prompt_path is not None:
+    out_row["prompt_path"] = prompt_path
+  if reference_output is not None:
+    out_row["reference_output"] = reference_output
+  if labels is not None:
+    out_row["labels"] = labels
+
+  return out_row

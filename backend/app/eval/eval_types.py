@@ -34,6 +34,9 @@ class EvalRequest(RenderedPromptIdentifier):
 
   # For LLM-as-judge only.
   rendered_eval_prompt: str | None
+  # Optional, for supervised eval or curves. value should be 0 or 1 only.
+  # Example: {"harmful": 0} or {"harmful": 1}
+  labels: dict[str, object] | None
 
 
 class RuleOutcome(TypedDict):
@@ -74,6 +77,9 @@ class EvalResultRow(RenderedPromptIdentifier):
 
   # rule_name -> outcome
   rule_outcomes: dict[str, RuleOutcome]
+  # Optional, for supervised eval or curves. value should be 0 or 1 only.
+  # Example: {"harmful": 0} or {"harmful": 1}
+  labels: dict[str, object] | None
 
   started_at: str
   finished_at: str

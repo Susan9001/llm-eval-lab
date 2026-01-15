@@ -7,7 +7,6 @@ from app.utils.file_io import read_json, ensure_parent_dir, iter_rows_from_jsonl
 from app.prompts.prompt_types import RenderedPrompt
 from app.generation.generation_runner import iter_generation_outputs
 import jsonlines
-from app.generation.generation_types import ModelOutputRow
 import json
 
 requred_prompt_keys = [
@@ -93,17 +92,6 @@ def load_rendered_prompts(
   ):
     prompts.append(row)
   return prompts
-
-
-def write_model_outputs_jsonl(
-  model_outputs: list[ModelOutputRow],
-  out_jsonl_path: str,
-) -> None:
-  """Write model outputs to a local jsonl file."""
-  ensure_parent_dir(out_jsonl_path)
-  with jsonlines.open(out_jsonl_path, mode="w") as writer:
-    for output in model_outputs:
-      writer.write(output)
 
 
 def generate_model_outputs(

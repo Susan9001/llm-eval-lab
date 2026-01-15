@@ -1,0 +1,16 @@
+{
+  "adapter_name": "agnews_harmful",
+  "created_at": "2026-01-15T05:51:49Z",
+  "dataset_display_name": "AG News (harmful 0/1 demo)",
+  "dataset_group_uid": "agnews_harmful",
+  "dataset_version": "2026-01-14_all_head",
+  "file_format": "csv",
+  "input_path": "/mnt/c/Users/qkuan/Documents/llm-eval-lab/data/agnews_harmful_demo.csv",
+  "num_samples": 200,
+  "sampling": {
+    "limit": null,
+    "seed": null,
+    "should_random_sample": false
+  },
+  "split": "demo"
+}

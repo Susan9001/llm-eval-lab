@@ -12,11 +12,10 @@ from app.datasets.dataset_types import (
   DatasetSnapshotIdentifier,
   extract_dataset_snapshot_identifier,
 )
-from app.prompts.prompt_types import RenderedPrompt
 from app.prompts.prompt_template import (
   parse_prompt_path,
   load_prompt_text,
-  render_prompt,
+  render_one_prompt,
 )
 from app.utils.file_io import ensure_parent_dir, read_json
 
@@ -141,26 +140,14 @@ def render_and_write_one_prompt(
 
   with jsonlines.open(out_path, mode="w") as writer:
     for record in sample_records:
-      rendered_prompt = render_prompt(
+      out_row = render_one_prompt(
         template_text,
-        input_text=record["input_text"],
-        reference_output=record.get("reference_output"),
-        output_text=None,
+        prompt_group_uid=prompt_group_uid,
+        prompt_version=prompt_version,
+        dataset_identifier=dataset_identifier,
+        sample_record=record,
+        prompt_path=prompt_path,
       )
-
-      out_row: RenderedPrompt = {
-        "dataset_group_uid": dataset_identifier["dataset_group_uid"],
-        "dataset_version": dataset_identifier["dataset_version"],
-        "split": dataset_identifier["split"],
-        "prompt_group_uid": prompt_group_uid,
-        "prompt_version": prompt_version,
-        "prompt_path": prompt_path,
-        "source_sample_id": record["source_sample_id"],
-        "input_text": record["input_text"],
-        "rendered_prompt": rendered_prompt,
-      }
-      if record.get("reference_output") is not None:
-        out_row["reference_output"] = record["reference_output"]
 
       writer.write(out_row)
 
@@ -184,6 +171,9 @@ def render_prompts(args: RenderPromptsCliArgs) -> list[str]:
         dataset_identifier=dataset_identifier,
       )
     )
+  print("Rendered prompts written to:")
+  for path in out_paths:
+    print(f"  - {path}")
   return out_paths
 
 
