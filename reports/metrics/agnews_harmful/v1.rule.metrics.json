@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "generated_at": "2026-01-15T23:58:06Z",
+    "threshold": 0.5,
+    "primary_score_rule": "harmful_score",
+    "label_key": "harmful"
+  },
+  "overall": {
+    "num_total": 200,
+    "num_generation_succeeded": 200,
+    "num_generation_failed": 0,
+    "num_eval_succeeded": 200,
+    "num_eval_failed": 0,
+    "num_primary_scored": 200,
+    "num_over_threshold": 103,
+    "over_threshold_rate": 0.515,
+    "avg_score": 0.5017834999999998,
+    "num_labeled": 200,
+    "num_labeled_pos": 100,
+    "num_labeled_neg": 100,
+    "tp": 52,
+    "fp": 51,
+    "tn": 49,
+    "fn": 48,
+    "accuracy": 0.505,
+    "precision": 0.5048543689320388,
+    "recall": 0.52,
+    "f1": 0.5123152709359606
+  },
+  "by_model_name": {
+    "harmful_score_mock_model": {
+      "num_total": 200,
+      "num_generation_succeeded": 200,
+      "num_generation_failed": 0,
+      "num_eval_succeeded": 200,
+      "num_eval_failed": 0,
+      "num_primary_scored": 200,
+      "num_over_threshold": 103,
+      "over_threshold_rate": 0.515,
+      "avg_score": 0.5017834999999998,
+      "num_labeled": 200,
+      "num_labeled_pos": 100,
+      "num_labeled_neg": 100,
+      "tp": 52,
+      "fp": 51,
+      "tn": 49,
+      "fn": 48,
+      "accuracy": 0.505,
+      "precision": 0.5048543689320388,
+      "recall": 0.52,
+      "f1": 0.5123152709359606
+    }
+  },
+  "by_prompt_version": {
+    "agnews_harmful:v1": {
+      "num_total": 200,
+      "num_generation_succeeded": 200,
+      "num_generation_failed": 0,
+      "num_eval_succeeded": 200,
+      "num_eval_failed": 0,
+      "num_primary_scored": 200,
+      "num_over_threshold": 103,
+      "over_threshold_rate": 0.515,
+      "avg_score": 0.5017834999999998,
+      "num_labeled": 200,
+      "num_labeled_pos": 100,
+      "num_labeled_neg": 100,
+      "tp": 52,
+      "fp": 51,
+      "tn": 49,
+      "fn": 48,
+      "accuracy": 0.505,
+      "precision": 0.5048543689320388,
+      "recall": 0.52,
+      "f1": 0.5123152709359606
+    }
+  },
+  "curves": {
+    "roc": {
+      "fprs": [],
+      "tprs": [],
+      "thresholds": []
+    },
+    "pr": {
+      "precisions": [],
+      "recalls": [],
+      "thresholds": []
+    },
+    "roc_auc": null,
+    "pr_auc": null,
+    "num_labeled": 0,
+    "num_labeled_pos": 0,
+    "num_labeled_neg": 0
+  }
+}
