@@ -9,7 +9,7 @@ from app.eval.aggregators.metrics.metrics_types import (
   MetricsJson,
 )
 from app.eval.aggregators.metrics.bucket_accumulator import BucketAccumulator
-from app.eval.aggregators.metrics.curves import build_curves_placeholder
+from app.eval.aggregators.metrics.curves import build_curves
 
 
 def build_metrics(
@@ -45,5 +45,5 @@ def build_metrics(
     overall=overall_bucket.get_metrics(),
     by_model_name=metrics_by_model_name,
     by_prompt_version=metrics_by_prompt_version,
-    curves=build_curves_placeholder(),
+    curves=build_curves(eval_results_rows, config),
   )

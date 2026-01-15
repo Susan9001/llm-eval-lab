@@ -151,7 +151,7 @@ def test_aggregate_metrics_cli_end_to_end(tmp_path) -> None:
     overall["num_primary_scored"] == 3
   )  # All 3 succeeded rows have valid scores
 
-  assert overall["positive_rate"] == pytest.approx(2 / 3, rel=1e-9)
+  assert overall["over_threshold_rate"] == pytest.approx(2 / 3, rel=1e-9)
   assert overall["avg_score"] == pytest.approx((1.0 + 0.5 + 0.2) / 3, rel=1e-9)
 
   assert "by_model_name" in metrics

@@ -10,7 +10,7 @@
     "num_generation_failed": 0,
     "num_eval_succeeded": 80,
     "num_eval_failed": 0,
-    "positive_rate": 1.0,
+    "over_threshold_rate": 1.0,
     "avg_score": 1.0
   },
   "by_model_name": {
@@ -20,7 +20,7 @@
       "num_generation_failed": 0,
       "num_eval_succeeded": 80,
       "num_eval_failed": 0,
-      "positive_rate": 1.0,
+      "over_threshold_rate": 1.0,
       "avg_score": 1.0
     }
   },
@@ -31,7 +31,7 @@
       "num_generation_failed": 0,
       "num_eval_succeeded": 80,
       "num_eval_failed": 0,
-      "positive_rate": 1.0,
+      "over_threshold_rate": 1.0,
       "avg_score": 1.0
     }
   },

@@ -52,7 +52,7 @@ def parse_args() -> MetricsCliArgs:
     "--threshold",
     required=True,
     type=float,
-    help="Threshold for positive_rate, pass if score >= threshold.",
+    help="Threshold for over_threshold_rate, pass if score >= threshold.",
   )
 
   ns = parser.parse_args()

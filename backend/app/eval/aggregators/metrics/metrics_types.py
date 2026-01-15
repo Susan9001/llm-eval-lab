@@ -22,9 +22,21 @@ class BucketMetrics(TypedDict):
   num_eval_succeeded: int
   num_eval_failed: int
   num_primary_scored: int
+  num_labeled: int = 0  # with valid 0/1 label in EvalResultRow
+  tp, fp, tn, fn = 0, 0, 0, 0
 
-  positive_rate: float
   avg_score: float | None
+  over_threshold_rate: float | None
+
+  # supervised metrics (None when num_labeled == 0)
+  # (tp + tn) / (tp + tn + fp + fn)
+  accuracy: float | None
+  # tp / (tp + fp), None if no positive prediction.
+  precision: float | None
+  # tp / (tp + fn), None if no positive label.
+  recall: float | None
+  # 2PR / (P + R), None if precision or recall is None.
+  f1: float | None
 
 
 class CurvesMetrics(TypedDict):
@@ -38,8 +50,13 @@ class CurvesMetrics(TypedDict):
   - pr: precisions, recalls, thresholds
   """
 
-  roc: dict[str, list[float]]
-  pr: dict[str, list[float]]
+  roc: dict[str, list[float]]  # fprs, tprs, thresholds
+  pr: dict[str, list[float]]  # precisions, recalls, thresholds
+  roc_auc: float | None
+  pr_auc: float | None
+  num_labeled: int
+  num_labeled_pos: int
+  num_labeled_neg: int
 
 
 class MetricsJson(TypedDict):
@@ -56,9 +73,14 @@ class MetricsBuildConfig:
   threshold: float
   primary_score_rule: str
 
+  # Which label to treat as the binary ground truth, stored in EvalResultRow.labels.
+  # Demo: default to the project's "harmful" label.
+  label_key: str = "harmful"
+
   def to_meta(self) -> dict[str, object]:
     return {
       "generated_at": self.generated_at,
       "threshold": self.threshold,
       "primary_score_rule": self.primary_score_rule,
+      "label_key": self.label_key,
     }

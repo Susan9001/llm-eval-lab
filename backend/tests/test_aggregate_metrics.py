@@ -92,7 +92,7 @@ def test_build_metrics_single_row():
   assert result["overall"]["num_total"] == 1
   assert result["overall"]["num_eval_succeeded"] == 1
   assert result["overall"]["num_primary_scored"] == 1
-  assert result["overall"]["positive_rate"] == 1.0
+  assert result["overall"]["over_threshold_rate"] == 1.0
   assert result["overall"]["avg_score"] == 0.8
 
   # By model name
@@ -131,7 +131,7 @@ def test_build_metrics_multiple_rows_different_models():
 
   # Overall: 3 rows, 2 passed (0.7 and 0.9)
   assert result["overall"]["num_total"] == 3
-  assert result["overall"]["positive_rate"] == 2 / 3
+  assert result["overall"]["over_threshold_rate"] == 2 / 3
 
   # By model name
   assert len(result["by_model_name"]) == 2

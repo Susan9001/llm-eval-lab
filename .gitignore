@@ -32,3 +32,5 @@ data/*
 !data/snapshots/*
 
 tmp/
+
+.claude/*
