@@ -55,9 +55,6 @@ def _empty_curves(
 class CurvesAccumulator:
   """Internal accumulator for building CurvesMetrics.
 
-  Bucketing (overall / by_model_name / by_prompt_version) should be done by
-  the caller (e.g. build_metrics). This accumulator only tracks one bucket.
-
   Skip rules are kept consistent with the prior build_curves implementation:
   - eval_status must be SUCCEEDED
   - primary_score_rule outcome must exist and be SUCCEEDED
