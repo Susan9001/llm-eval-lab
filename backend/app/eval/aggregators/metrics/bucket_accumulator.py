@@ -76,19 +76,19 @@ class BucketAccumulator:
 
     # Confusion matrix only if label is available.
     labels = row.get("labels") or {}
-    gold = labels.get(config.label_key)
-    if gold not in (0, 1):
+    label = labels.get(config.binary_label_key)
+    if label not in (0, 1):
       return
     self.num_labeled += 1
-    if gold == 1:
+    if label == 1:
       self.num_labeled_pos += 1
     else:
       self.num_labeled_neg += 1
-    if gold == 1 and pred == 1:
+    if label == 1 and pred == 1:
       self.tp += 1
-    elif gold == 1 and pred == 0:
+    elif label == 1 and pred == 0:
       self.fn += 1
-    elif gold == 0 and pred == 1:
+    elif label == 0 and pred == 1:
       self.fp += 1
     else:
       self.tn += 1
@@ -113,9 +113,9 @@ class BucketAccumulator:
       if pred_pos > 0:
         precision = self.tp / pred_pos
 
-      pred_neg = self.tp + self.fn
-      if pred_neg > 0:
-        recall = self.tp / pred_neg
+      labeled_pos = self.tp + self.fn
+      if labeled_pos > 0:
+        recall = self.tp / labeled_pos
 
       if (
         precision is not None

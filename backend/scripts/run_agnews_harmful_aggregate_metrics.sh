@@ -22,6 +22,7 @@ PRIMARY_SCORE_RULE="${PRIMARY_SCORE_RULE:-harmful_score}"
 THRESHOLD="${THRESHOLD:-0.5}"
 
 METRICS_SCRIPT="${BACKEND_DIR}/app/cli/aggregate_metrics_cli.py"
+BINARY_LABEL_KEY="${BINARY_LABEL_KEY:-harmful}"
 
 if [[ ! -f "${EVAL_RESULTS_JSONL}" ]]; then
   echo "Error: eval results jsonl not found: ${EVAL_RESULTS_JSONL}"
@@ -44,6 +45,8 @@ ARGS=(
   "--metrics-path" "${METRICS_JSON}"
   "--primary-score-rule" "${PRIMARY_SCORE_RULE}"
   "--threshold" "${THRESHOLD}"
+  "--binary-label-key" "${BINARY_LABEL_KEY}"
+  "--include-curves"
 )
 
 echo "Eval results: ${EVAL_RESULTS_JSONL}"

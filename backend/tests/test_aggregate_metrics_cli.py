@@ -125,6 +125,8 @@ def test_aggregate_metrics_cli_end_to_end(tmp_path) -> None:
     metrics_path=metrics_path,
     primary_score_rule="exact_match",
     threshold=0.5,
+    binary_label_key=None,
+    include_curves=False,
   )
 
   run_metrics(args)
@@ -138,8 +140,11 @@ def test_aggregate_metrics_cli_end_to_end(tmp_path) -> None:
   assert isinstance(metrics["meta"]["generated_at"], str)
   assert metrics["meta"]["generated_at"].endswith("Z")
 
-  assert "overall" in metrics
-  overall = metrics["overall"]
+  # Check summary structure
+  assert "summary" in metrics
+  summary = metrics["summary"]
+  assert "overall" in summary
+  overall = summary["overall"]
   assert overall["num_total"] == 4
   assert overall["num_generation_succeeded"] == 3
   assert overall["num_generation_failed"] == 1
@@ -154,16 +159,15 @@ def test_aggregate_metrics_cli_end_to_end(tmp_path) -> None:
   assert overall["over_threshold_rate"] == pytest.approx(2 / 3, rel=1e-9)
   assert overall["avg_score"] == pytest.approx((1.0 + 0.5 + 0.2) / 3, rel=1e-9)
 
-  assert "by_model_name" in metrics
-  assert set(metrics["by_model_name"].keys()) == {"gpt-test-1", "gpt-test-2"}
+  assert "by_model_name" in summary
+  assert set(summary["by_model_name"].keys()) == {"gpt-test-1", "gpt-test-2"}
 
-  assert "by_prompt_version" in metrics
+  assert "by_prompt_version" in summary
   # key format: prompt_group_uid:prompt_version
-  assert set(metrics["by_prompt_version"].keys()) == {
+  assert set(summary["by_prompt_version"].keys()) == {
     "truthfulqa_prompt:v1",
     "truthfulqa_prompt:v2",
   }
 
-  assert "curves" in metrics
-  assert "roc" in metrics["curves"]
-  assert "pr" in metrics["curves"]
+  # curves is None when include_curves=False
+  assert metrics["curves"] is None

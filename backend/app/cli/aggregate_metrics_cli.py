@@ -26,6 +26,8 @@ class MetricsCliArgs:
   metrics_path: str
   primary_score_rule: str
   threshold: float
+  binary_label_key: str | None = None
+  include_curves: bool = False
 
 
 def parse_args() -> MetricsCliArgs:
@@ -54,14 +56,34 @@ def parse_args() -> MetricsCliArgs:
     type=float,
     help="Threshold for over_threshold_rate, pass if score >= threshold.",
   )
+  parser.add_argument(
+    "--binary-label-key",
+    type=str,
+    required=False,
+    help="Label key to use for binary supervised metrics (e.g. 'harmful').",
+  )
 
-  ns = parser.parse_args()
+  parser.add_argument(
+    "--include-curves",
+    action="store_true",
+    help=(
+      "Whether to include curves metrics (ROC, PR) in the output. "
+      "Only for binary supervised metrics."
+    ),
+  )
+
+  args = parser.parse_args()
+
+  if args.include_curves and not args.binary_label_key:
+    raise ValueError("--include-curves requires --binary-label-key")
 
   return MetricsCliArgs(
-    eval_results_path=ns.eval_results_path,
-    metrics_path=ns.metrics_path,
-    primary_score_rule=ns.primary_score_rule,
-    threshold=ns.threshold,
+    eval_results_path=args.eval_results_path,
+    metrics_path=args.metrics_path,
+    primary_score_rule=args.primary_score_rule,
+    threshold=args.threshold,
+    binary_label_key=args.binary_label_key,
+    include_curves=args.include_curves,
   )
 
 
@@ -75,6 +97,8 @@ def run_metrics(args: MetricsCliArgs) -> None:
     generated_at=utc_now_iso8601(),
     threshold=args.threshold,
     primary_score_rule=args.primary_score_rule,
+    binary_label_key=args.binary_label_key,
+    include_curves=args.include_curves,
   )
 
   metrics = build_metrics(

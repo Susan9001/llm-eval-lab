@@ -22,8 +22,16 @@ class BucketMetrics(TypedDict):
   num_eval_succeeded: int
   num_eval_failed: int
   num_primary_scored: int
+  num_over_threshold: int = 0
+
   num_labeled: int = 0  # with valid 0/1 label in EvalResultRow
-  tp, fp, tn, fn = 0, 0, 0, 0
+  num_labeled_pos: int = 0
+  num_labeled_neg: int = 0
+
+  tp: int = 0
+  fp: int = 0
+  tn: int = 0
+  fn: int = 0
 
   avg_score: float | None
   over_threshold_rate: float | None
@@ -59,12 +67,22 @@ class CurvesMetrics(TypedDict):
   num_labeled_neg: int
 
 
-class MetricsJson(TypedDict):
-  meta: dict[str, object]
+class BucketBundle(TypedDict):
   overall: BucketMetrics
   by_model_name: dict[str, BucketMetrics]
   by_prompt_version: dict[str, BucketMetrics]
-  curves: CurvesMetrics
+
+
+class CurvesBundle(TypedDict):
+  overall: CurvesMetrics
+  by_model_name: dict[str, CurvesMetrics]  # can be empty dict
+  by_prompt_version: dict[str, CurvesMetrics]  # can be empty dict
+
+
+class MetricsJson(TypedDict):
+  meta: dict[str, object]
+  summary: BucketBundle
+  curves: CurvesBundle | None
 
 
 @dataclass(frozen=True)
@@ -73,14 +91,5 @@ class MetricsBuildConfig:
   threshold: float
   primary_score_rule: str
 
-  # Which label to treat as the binary ground truth, stored in EvalResultRow.labels.
-  # Demo: default to the project's "harmful" label.
-  label_key: str = "harmful"
-
-  def to_meta(self) -> dict[str, object]:
-    return {
-      "generated_at": self.generated_at,
-      "threshold": self.threshold,
-      "primary_score_rule": self.primary_score_rule,
-      "label_key": self.label_key,
-    }
+  binary_label_key: str | None = None
+  include_curves: bool = False

@@ -19,6 +19,8 @@ def make_config(
     generated_at="2024-01-01T00:00:00Z",
     threshold=threshold,
     primary_score_rule=primary_score_rule,
+    binary_label_key=None,
+    include_curves=False,
   )
 
 
@@ -78,7 +80,13 @@ def test_empty_accumulator():
 
 
 def test_single_row_eval_succeeded_pass():
-  config = make_config(threshold=0.5)
+  config = MetricsBuildConfig(
+    generated_at="2024-01-01T00:00:00Z",
+    threshold=0.5,
+    primary_score_rule="rule1",
+    binary_label_key="harmful",
+    include_curves=False,
+  )
   acc = BucketAccumulator()
 
   row = make_row(
@@ -101,7 +109,13 @@ def test_single_row_eval_succeeded_pass():
 
 
 def test_single_row_eval_succeeded_no_pass():
-  config = make_config(threshold=0.5)
+  config = MetricsBuildConfig(
+    generated_at="2024-01-01T00:00:00Z",
+    threshold=0.5,
+    primary_score_rule="rule1",
+    binary_label_key="harmful",
+    include_curves=False,
+  )
   acc = BucketAccumulator()
 
   row = make_row(
@@ -180,7 +194,13 @@ def test_single_row_primary_score_rule_not_exist():
 
 
 def test_single_row_score_equals_threshold_passes():
-  config = make_config(threshold=0.5)
+  config = MetricsBuildConfig(
+    generated_at="2024-01-01T00:00:00Z",
+    threshold=0.5,
+    primary_score_rule="rule1",
+    binary_label_key="harmful",
+    include_curves=False,
+  )
   acc = BucketAccumulator()
 
   row = make_row(rule_outcomes={"rule1": make_rule_outcome(0.5)})
@@ -192,7 +212,13 @@ def test_single_row_score_equals_threshold_passes():
 
 
 def test_multiple_rows_mixed():
-  config = make_config(threshold=0.5)
+  config = MetricsBuildConfig(
+    generated_at="2024-01-01T00:00:00Z",
+    threshold=0.5,
+    primary_score_rule="rule1",
+    binary_label_key="harmful",
+    include_curves=False,
+  )
   acc = BucketAccumulator()
 
   # Pass: 0.8 >= 0.5
@@ -253,7 +279,13 @@ def test_get_metrics_with_zero_eval_succeeded():
 
 def test_confusion_matrix_perfect_classification():
   """Test perfect classification: all predictions match labels."""
-  config = make_config(threshold=0.5)
+  config = MetricsBuildConfig(
+    generated_at="2024-01-01T00:00:00Z",
+    threshold=0.5,
+    primary_score_rule="rule1",
+    binary_label_key="harmful",
+    include_curves=False,
+  )
   acc = BucketAccumulator()
 
   # True positives: label=1, score >= 0.5
@@ -286,7 +318,13 @@ def test_confusion_matrix_perfect_classification():
 
 def test_confusion_matrix_mixed_predictions():
   """Test mixed predictions with various TP, FP, TN, FN."""
-  config = make_config(threshold=0.5)
+  config = MetricsBuildConfig(
+    generated_at="2024-01-01T00:00:00Z",
+    threshold=0.5,
+    primary_score_rule="rule1",
+    binary_label_key="harmful",
+    include_curves=False,
+  )
   acc = BucketAccumulator()
 
   # True positives: label=1, score >= 0.5
@@ -331,7 +369,13 @@ def test_confusion_matrix_mixed_predictions():
 
 def test_confusion_matrix_no_positive_predictions():
   """Test when all predictions are negative (no positive predictions)."""
-  config = make_config(threshold=0.5)
+  config = MetricsBuildConfig(
+    generated_at="2024-01-01T00:00:00Z",
+    threshold=0.5,
+    primary_score_rule="rule1",
+    binary_label_key="harmful",
+    include_curves=False,
+  )
   acc = BucketAccumulator()
 
   # All true negatives: label=0, score < 0.5
@@ -354,7 +398,13 @@ def test_confusion_matrix_no_positive_predictions():
 
 def test_confusion_matrix_no_positive_labels():
   """Test when all labels are negative but some are predicted positive."""
-  config = make_config(threshold=0.5)
+  config = MetricsBuildConfig(
+    generated_at="2024-01-01T00:00:00Z",
+    threshold=0.5,
+    primary_score_rule="rule1",
+    binary_label_key="harmful",
+    include_curves=False,
+  )
   acc = BucketAccumulator()
 
   # True negatives: label=0, score < 0.5
@@ -385,7 +435,13 @@ def test_confusion_matrix_no_positive_labels():
 
 def test_confusion_matrix_no_negative_predictions():
   """Test when all predictions are positive."""
-  config = make_config(threshold=0.5)
+  config = MetricsBuildConfig(
+    generated_at="2024-01-01T00:00:00Z",
+    threshold=0.5,
+    primary_score_rule="rule1",
+    binary_label_key="harmful",
+    include_curves=False,
+  )
   acc = BucketAccumulator()
 
   # True positives: label=1, score >= 0.5
@@ -416,7 +472,13 @@ def test_confusion_matrix_no_negative_predictions():
 
 def test_rows_with_invalid_labels_ignored_in_confusion_matrix():
   """Test that rows with invalid labels don't affect confusion matrix."""
-  config = make_config(threshold=0.5)
+  config = MetricsBuildConfig(
+    generated_at="2024-01-01T00:00:00Z",
+    threshold=0.5,
+    primary_score_rule="rule1",
+    binary_label_key="harmful",
+    include_curves=False,
+  )
   acc = BucketAccumulator()
 
   # Valid labeled rows
