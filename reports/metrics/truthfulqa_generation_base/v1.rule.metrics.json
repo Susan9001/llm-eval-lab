@@ -1,50 +1,82 @@
 {
   "meta": {
-    "generated_at": "2026-01-15T05:49:35Z",
+    "generated_at": "2026-01-16T19:00:03Z",
     "threshold": 0.5,
-    "primary_score_rule": "non_empty_output"
+    "primary_score_rule": "non_empty_output",
+    "binary_label_key": null,
+    "include_curves": false
   },
-  "overall": {
-    "num_total": 80,
-    "num_generation_succeeded": 80,
-    "num_generation_failed": 0,
-    "num_eval_succeeded": 80,
-    "num_eval_failed": 0,
-    "over_threshold_rate": 1.0,
-    "avg_score": 1.0
-  },
-  "by_model_name": {
-    "mock-model": {
+  "summary": {
+    "overall": {
       "num_total": 80,
       "num_generation_succeeded": 80,
       "num_generation_failed": 0,
       "num_eval_succeeded": 80,
       "num_eval_failed": 0,
+      "num_primary_scored": 80,
+      "num_over_threshold": 80,
       "over_threshold_rate": 1.0,
-      "avg_score": 1.0
-    }
-  },
-  "by_prompt_version": {
-    "truthfulqa_generation_base:v1": {
-      "num_total": 80,
-      "num_generation_succeeded": 80,
-      "num_generation_failed": 0,
-      "num_eval_succeeded": 80,
-      "num_eval_failed": 0,
-      "over_threshold_rate": 1.0,
-      "avg_score": 1.0
-    }
-  },
-  "curves": {
-    "roc": {
-      "fprs": [],
-      "tprs": [],
-      "thresholds": []
+      "avg_score": 1.0,
+      "num_labeled": 0,
+      "num_labeled_pos": 0,
+      "num_labeled_neg": 0,
+      "tp": 0,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1": null
     },
-    "pr": {
-      "precisions": [],
-      "recalls": [],
-      "thresholds": []
+    "by_model_name": {
+      "mock-model": {
+        "num_total": 80,
+        "num_generation_succeeded": 80,
+        "num_generation_failed": 0,
+        "num_eval_succeeded": 80,
+        "num_eval_failed": 0,
+        "num_primary_scored": 80,
+        "num_over_threshold": 80,
+        "over_threshold_rate": 1.0,
+        "avg_score": 1.0,
+        "num_labeled": 0,
+        "num_labeled_pos": 0,
+        "num_labeled_neg": 0,
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0,
+        "accuracy": null,
+        "precision": null,
+        "recall": null,
+        "f1": null
+      }
+    },
+    "by_prompt_version": {
+      "truthfulqa_generation_base:v1": {
+        "num_total": 80,
+        "num_generation_succeeded": 80,
+        "num_generation_failed": 0,
+        "num_eval_succeeded": 80,
+        "num_eval_failed": 0,
+        "num_primary_scored": 80,
+        "num_over_threshold": 80,
+        "over_threshold_rate": 1.0,
+        "avg_score": 1.0,
+        "num_labeled": 0,
+        "num_labeled_pos": 0,
+        "num_labeled_neg": 0,
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0,
+        "accuracy": null,
+        "precision": null,
+        "recall": null,
+        "f1": null
+      }
     }
-  }
+  },
+  "curves": null
 }

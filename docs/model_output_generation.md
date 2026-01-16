@@ -4,8 +4,6 @@ This codepath turns rendered prompts into model outputs by calling a generation 
 
 ## Where Things Live
 
-Recommended layout:
-
 1. `backend/app/generation/generation_types.py`  
    Core TypedDict schemas (`GenerationRequest`, `GenerationResponse`, `Usage`, `ModelOutputRow`).
 2. `backend/app/generation/generation_runner.py`  
@@ -14,6 +12,7 @@ Recommended layout:
    Provider adapters, plus a registry for lookup by `provider`.
    - `base.py`: adapter Protocol + registry helpers.
    - `mock_adapter.py`: mock implementation used for tests and local runs.
+   - `harmful_score_adapter.py` demo adapter that returns a synthetic harmfulness probability score (0-1) for datasets with a binary label (used AGNews harmfulness as example).
 4. `backend/app/cli/generate_model_outputs_cli.py`  
    CLI entrypoint that reads rendered prompts JSONL and writes model outputs JSONL.
 5. `backend/scripts/run_truthfulqa_model_outputs.sh`  
@@ -121,7 +120,11 @@ A self-describing output row that combines dataset identity, prompt identity, pr
 ### Option A: One-click script
 
 ```bash
-bash backend/scripts/run_truthfulqa_model_outputs.sh
+# Truthful QA
+./backend/scripts/run_truthfulqa_model_outputs.sh
+
+# ag_news with 0/1 Harmful labels
+./backend/scripts/run_agnews_harmful_model_outputs.sh
 ```
 
 This script:

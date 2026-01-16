@@ -13,8 +13,6 @@ This stage consumes `rendered_prompts.jsonl` and `model_outputs.jsonl`, joins th
 
 - `backend/app/eval/judges/adapters/rule_adapter.py`: applies a list of rules and produces `EvalResultRow`.
 - `backend/app/eval/judges/rules/base.py`: `Rule` Protocol, rule registry, and `build_rules()`.
-- `backend/app/eval/judges/rules/non_empty_output.py`: example rule.
-- `backend/app/eval/judges/rules/exact_match_reference.py`: example rule.
 
 ### Entry points
 
@@ -26,6 +24,7 @@ This stage consumes `rendered_prompts.jsonl` and `model_outputs.jsonl`, joins th
 ### Rendered prompts
 
 A JSONL file produced by prompt rendering, typically under `reports/rendered_prompts/**/v1.jsonl`.
+For binary tasks, the dataset snapshot row should include a `labels` object, e.g. `{"harmful": 0/1}`.
 
 Each row is a `RenderedPrompt` and must contain the identity fields that make it joinable:
 
@@ -77,6 +76,7 @@ At a high level, each row contains:
 - Judge metadata: `judge_type`, `judge_name`, `judge_version` (optional)
 - Status: `eval_status`, `eval_error_message`
 - Rule details: `rule_outcomes` as a mapping `{rule_name: RuleOutcome}`
+- 0/1 labels: `labels` as original dataset labels (if present) for binary supervised jobs.
 - Timing: `started_at`, `finished_at`, `latency_ms`
 
 `RuleOutcome` is intentionally small and composable:
@@ -109,14 +109,18 @@ pytest -q backend/tests/test_eval_run.py
 ### Option A: one-click script
 
 ```bash
-bash backend/scripts/run_truthfulqa_eval.sh
+# Truthful QA
+./backend/scripts/run_truthfulqa_eval.sh
+
+# ag_news with 0/1 Harmful labels
+./backend/scripts/run_truthfulqa_eval.sh
 ```
 
 This script is expected to call the CLI with concrete file paths under `reports/`.
 
 ### Option B: run the CLI directly
 
-Example:
+Example for judge by rule:
 
 ```bash
 PYTHONPATH=backend python backend/app/cli/run_eval_cli.py \
