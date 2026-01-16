@@ -56,10 +56,14 @@ class CurvesMetrics(TypedDict):
   Expected keys:
   - roc: fprs, tprs, thresholds
   - pr: precisions, recalls, thresholds
+  Note:
+  - thresholds[0] is None (sentinel for the starting point where pred_pos=0),
   """
 
-  roc: dict[str, list[float]]  # fprs, tprs, thresholds
-  pr: dict[str, list[float]]  # precisions, recalls, thresholds
+  # fprs, tprs, thresholds
+  roc: dict[str, list[float | None]]
+  # precisions, recalls, thresholds
+  pr: dict[str, list[float | None]]
   roc_auc: float | None
   pr_auc: float | None
   num_labeled: int

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-01-16T08:00:44Z",
+    "generated_at": "2026-01-16T08:08:40Z",
     "threshold": 0.5,
     "primary_score_rule": "harmful_score",
     "binary_label_key": "harmful",
@@ -485,7 +485,7 @@
           1.0
         ],
         "thresholds": [
-          Infinity,
+          null,
           0.9986,
           0.9948,
           0.9932,
@@ -1087,7 +1087,7 @@
           1.0
         ],
         "thresholds": [
-          Infinity,
+          null,
           0.9986,
           0.9948,
           0.9932,
@@ -1697,7 +1697,7 @@
             1.0
           ],
           "thresholds": [
-            Infinity,
+            null,
             0.9986,
             0.9948,
             0.9932,
@@ -2299,7 +2299,7 @@
             1.0
           ],
           "thresholds": [
-            Infinity,
+            null,
             0.9986,
             0.9948,
             0.9932,
@@ -2910,7 +2910,7 @@
             1.0
           ],
           "thresholds": [
-            Infinity,
+            null,
             0.9986,
             0.9948,
             0.9932,
@@ -3512,7 +3512,7 @@
             1.0
           ],
           "thresholds": [
-            Infinity,
+            null,
             0.9986,
             0.9948,
             0.9932,

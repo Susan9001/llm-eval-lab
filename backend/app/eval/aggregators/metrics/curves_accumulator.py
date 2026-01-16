@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from math import inf
 
 from app.common.statuses import EVAL_STATUS_SUCCEEDED, RULE_STATUS_SUCCEEDED
 from app.eval.eval_types import EvalResultRow
@@ -135,7 +134,9 @@ class CurvesAccumulator:
     pr_precisions: list[float] = [1.0]
     pr_recalls: list[float] = [0.0]
 
-    thresholds: list[float] = [inf]
+    # thresholds[0] is a sentinel for the (FPR=0, TPR=0) / (recall=0) starting
+    # point where no samples are predicted positive.
+    thresholds: list[float | None] = [None]
 
     for threshold in thresholds_sorted:
       labeled_pos, labeled_neg = self.threshold_counts[threshold]
