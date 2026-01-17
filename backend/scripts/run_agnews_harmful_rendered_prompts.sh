@@ -41,12 +41,14 @@ done
 
 export PYTHONPATH="${BACKEND_DIR}"
 
-python "${RENDER_SCRIPT}" \
-  "${DEFAULT_PROMPT_PATHS[@]}" \
-  --prompts-root "${PROMPTS_DIR}" \
-  --samples-jsonl-path "${SAMPLES_JSONL}" \
-  --snapshot-meta-path "${SNAPSHOT_META_PATH}" \
-  --rendered-prompts-dir "${OUT_DIR}" \
-  "$@"
+ARGS=(
+  "--prompts-root" "${PROMPTS_DIR}"
+  "--samples-jsonl-path" "${SAMPLES_JSONL}"
+  "--snapshot-meta-path" "${SNAPSHOT_META_PATH}"
+  "--rendered-prompts-dir" "${OUT_DIR}"
+)
+
+# Prompt paths (positional arg) must come before named args
+python "${RENDER_SCRIPT}" "${DEFAULT_PROMPT_PATHS[@]}" "${ARGS[@]}" "$@"
 
 echo "Done. Rendered prompts written to: ${OUT_DIR}"
