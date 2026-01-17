@@ -13,6 +13,7 @@ llm-eval-lab/
         generate_model_outputs_cli.py        # run generation on rendered prompts and write model outputs jsonl
         render_prompts_cli.py                # render prompt templates with local samples jsonl
         run_eval_cli.py                      # run evaluation: join rendered_prompts + model_outputs, run judges
+        report_markdown_cli.py               # generate a markdown report from eval artifacts
       common/
         statuses.py                          # shared status constants
       configs/                               # config files (scaffolding for later phases)
@@ -57,6 +58,10 @@ llm-eval-lab/
       prompts/
         prompt_template.py                   # parse prompt path, load template, render placeholders
         prompt_types.py                      # RenderedPrompt TypedDict
+      report/                                # report extraction + markdown rendering
+        extract.py                           # build RunInfoSection + TopSamplesSection from artifacts
+        render_markdown.py                   # build_report_markdown(...) markdown renderer
+        report_types.py                      # TypedDicts for report sections
       services/                              # store-oriented services (Postgres/Redis), later phases
         datasets_svc.py
         eval_results_svc.py
@@ -75,12 +80,15 @@ llm-eval-lab/
       run_agnews_harmful_model_outputs.sh
       run_agnews_harmful_rendered_prompts.sh
       run_agnews_harmful_snapshot.sh
+      run_agnews_harmful_report_markdown.sh
       run_truthfulqa_aggregate_metrics.sh
       run_truthfulqa_eval.sh
       run_truthfulqa_model_outputs.sh
       run_truthfulqa_rendered_prompts.sh
       run_truthfulqa_snapshot.sh
+      run_truthfulqa_report_markdown.sh
     tests/
+      test_render_markdown.py
     alembic.ini
     pyproject.toml
   data/
@@ -95,6 +103,7 @@ llm-eval-lab/
     prompt_rendering.md
     rule_based_evaluation.md
     aggregate_metrics.md
+    report_markdown.md
   prompts/
     agnews_harmful/
       v1.txt
@@ -125,9 +134,15 @@ llm-eval-lab/
       truthfulqa_generation_base/
         v1.jsonl
         v2.jsonl
+    reports/
+      agnews_harmful/
+        v1.rule.md
+      truthfulqa_generation_base/
+        v1.rule.md
   docker-compose.yml
   Makefile
   README.md
+
 ```
 
 ## What each directory is for
@@ -174,6 +189,17 @@ Evaluation and judging pipeline (separate from generation). It joins `RenderedPr
   - `curves_accumulator.py`: accumulates curve pairs and builds ROC/PR curves + AUC (optional).
   - `metrics_types.py`: TypedDict schemas for JSON output (`MetricsJson`, `BucketBundle`, `CurvesBundle`, etc.).
 
+**backend/app/report**
+
+Markdown report generation.
+
+This module turns eval artifacts into a human-readable Markdown report:
+
+- `report_types.py`: TypedDicts for report sections. It intentionally avoids duplicating fields that already exist in `MetricsJson`.
+- `extract.py`: extracts non-metrics report sections from snapshot meta + eval results:
+  - Run info (dataset snapshot + prompt/model/judge identity).
+  - Top sample lists (low score, high score, near threshold) based on the primary score rule.
+- `render_markdown.py`: renders the final Markdown. It takes `MetricsJson` directly and displays most fields, while filtering out bucketed sections like `by_model_name` and `by_prompt_version` to keep the report concise.
 
 **backend/app/services**
 Store-oriented service layer (PostgreSQL/Redis). This is intentionally minimal early on.
@@ -195,6 +221,7 @@ AGNews harmful (binary label + curves):
 - `run_agnews_harmful_model_outputs.sh`
 - `run_agnews_harmful_eval.sh`
 - `run_agnews_harmful_aggregate_metrics.sh`
+- `run_agnews_harmful_report_markdown.sh`
 
 TruthfulQA (non-binary demo):
 - `run_truthfulqa_snapshot.sh`
@@ -202,6 +229,7 @@ TruthfulQA (non-binary demo):
 - `run_truthfulqa_model_outputs.sh`
 - `run_truthfulqa_eval.sh`
 - `run_truthfulqa_aggregate_metrics.sh`
+- `run_truthfulqa_report_markdown.sh`
 
 **data/**
 
